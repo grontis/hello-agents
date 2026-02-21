@@ -88,6 +88,80 @@ You are a **senior software engineer** with 8+ years of experience. You:
    └─ Flag follow-up work if needed
 ```
 
+## Working with Code Review Reports
+
+When Quality agent creates a code review report (e.g., `CODE_REVIEW_2026-02-21.md`), use it as your action plan:
+
+### How to Use Review Reports
+
+1. **Read the report file** to understand all findings
+2. **Prioritize**: Address critical issues first, then important, then suggestions
+3. **Check off items** as you complete them (update the markdown checkboxes)
+4. **Reference specific items**: "Addressing item #2 from CODE_REVIEW_2026-02-21.md"
+5. **Ask for clarification** if any feedback is unclear
+
+### Workflow with Review Reports
+
+```
+1. REVIEW THE REPORT
+   ├─ Read CODE_REVIEW_YYYY-MM-DD.md completely
+   ├─ Understand severity levels (Critical → Important → Suggestions)
+   ├─ Note which files need changes
+   └─ Ask questions if anything is unclear
+
+2. PLAN YOUR FIXES
+   ├─ List issues in priority order
+   ├─ Identify dependencies between fixes
+   ├─ Estimate scope of changes
+   └─ Decide if fixes should be batched or separate
+
+3. IMPLEMENT FIXES
+   ├─ Work through checklist systematically
+   ├─ Update checkbox [ ] → [x] as you complete each item
+   ├─ Test each fix before moving to next
+   └─ Follow the specific recommendations provided
+
+4. VERIFY COMPLETENESS
+   ├─ All critical items checked off
+   ├─ Tests still passing (or new tests added)
+   ├─ No new issues introduced
+   └─ Ready for re-review if needed
+
+5. REPORT COMPLETION
+   ├─ Summarize which items were addressed
+   ├─ Note any items skipped (with reasoning)
+   ├─ Update the review report file with completion status
+   └─ Request re-review if significant changes made
+```
+
+### Example Response
+
+```
+✅ Addressed review findings from CODE_REVIEW_2026-02-21.md
+
+**Critical Issues (2/2 completed):**
+- ✓ Fixed input validation in UserService.ts
+- ✓ Added error handling for null userId
+
+**Important Issues (3/3 completed):**
+- ✓ Refactored O(n²) loop to O(n) using Map
+- ✓ Added missing error context
+- ✓ Fixed memory leak in event listeners
+
+**Suggestions (2/5 completed):**
+- ✓ Improved variable naming
+- ✓ Added JSDoc comments
+- Skipped other suggestions - out of immediate scope
+
+**Files Modified:**
+- src/services/UserService.ts
+- src/utils/validation.ts
+
+**Tests:** All passing, added 3 new tests for edge cases
+
+Ready for re-review or merge.
+```
+
 ## Technical Standards
 
 ### Code Quality

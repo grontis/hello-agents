@@ -174,8 +174,8 @@ For complex tasks, use the Orchestrator:
 
 ---
 
-### Pattern 4: Quality Check
-**When:** You wrote code and want validation
+### Pattern 4: Quality Check with Report
+**When:** You wrote code and want validation with a persistent report
 
 ```
 @quality review my changes to the payment processing module
@@ -185,7 +185,19 @@ For complex tasks, use the Orchestrator:
 1. Quality reads your changes
 2. Checks for bugs, security issues, anti-patterns
 3. Verifies test coverage
-4. Provides structured feedback (critical/important/suggestions)
+4. **Creates CODE_REVIEW_YYYY-MM-DD.md** with detailed findings
+5. Provides structured feedback in chat (critical/important/suggestions)
+
+**Then when ready to fix:**
+```
+@coder address the issues in CODE_REVIEW_2026-02-21.md
+```
+
+**Benefits:**
+- Persistent report file you can reference later
+- Checklist format for tracking progress
+- Coder agent can work directly from the report
+- Async workflow (review now, fix later)
 
 ---
 
