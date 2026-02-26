@@ -10,12 +10,20 @@
 
 ## Executive Summary
 
-[2-3 sentences: overall assessment, main concerns or praise, recommendation]
-
 **Severity Breakdown:**
-- 🔴 Critical: X issues (must fix before proceeding)
-- 🟡 Important: Y issues (should fix soon)
-- 💡 Suggestions: Z items (nice to have)
+- Critical: X
+- Important: Y
+- Suggestions: Z
+
+---
+
+## Plan Adherence
+
+| Aspect | Matches Plan | Notes |
+|--------|-------------|-------|
+| Architecture | | |
+| Interfaces | | |
+| File Structure | | |
 
 ---
 
@@ -23,75 +31,44 @@
 
 | File | Status | Notes |
 |------|--------|-------|
-| `path/to/file` | ✅ / ⚠️ / ❌ | [Brief note] |
 
 ---
 
-## Critical Issues ❌ (Must Fix)
+## Critical Issues (Must Fix)
 
-### [ ] 1. [File:Line] Issue Title
-- **Problem:** [What's wrong]
-- **Impact:** [Security/bugs/breaking changes/data loss]
-- **Suggested Fix:** [Specific code suggestion or approach]
-
----
-
-## Important Issues ⚠️ (Should Fix)
-
-### [ ] 1. [File:Line] Issue Title
-- **Problem:** [What's wrong]
-- **Impact:** [Performance/maintainability/reliability]
-- **Suggested Fix:** [Specific suggestion]
+### [ ] 1. [File:Line] Title
+- **Problem:**
+- **Impact:**
+- **Suggested Fix:**
 
 ---
 
-## Suggestions 💡 (Nice to Have)
+## Important Issues (Should Fix)
 
-### [ ] 1. [File:Line] Improvement
-- **Current:** [What exists]
-- **Suggested:** [How to improve]
-- **Benefit:** [Why it helps]
+### [ ] 1. [File:Line] Title
+- **Problem:**
+- **Impact:**
+- **Suggested Fix:**
+
+---
+
+## Suggestions (Nice to Have)
+
+### [ ] 1. [File:Line] Title
+- **Suggested:**
+- **Benefit:**
 
 ---
 
 ## Unit Test Assessment
-
-**Tests Provided:** [count] tests in [file(s)]
-**Quality:** Good / Adequate / Needs Improvement
-
-### Coverage Evaluation
-- ✅ [Well-covered areas]
-- ⚠️ [Gaps or weak areas]
-
-### Missing Test Cases
-- [ ] [Scenario not tested]
-
----
+- **Tests Provided:**
+- **Quality:**
+- **Gaps:**
 
 ## Security Review
 
-- [Concern or ✅ No issues found]
-
 ## Performance Review
 
-- [Concern or ✅ No issues found]
-
----
-
-## Positive Notes ✅
-
-- [Something done well]
-- [Good pattern or practice observed]
-
----
+## Positive Notes
 
 ## Action Items for Coder
-
-**Must Complete:**
-- [ ] [Critical fix 1]
-
-**Should Address:**
-- [ ] [Important fix 1]
-
-**Optional:**
-- [ ] [Suggestion 1]

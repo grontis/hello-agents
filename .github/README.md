@@ -36,6 +36,33 @@ The final quality gate. Verifies unit tests, writes integration tests, runs the 
 
 ---
 
+## File Structure
+
+```
+.github/agents/
+├── common.md              # Shared context all agents reference (artifact system, standards)
+├── orchestrator.agent.md  # Pipeline coordinator
+├── architect.agent.md     # Solution designer
+├── coder.agent.md         # Implementation specialist
+├── code-reviewer.agent.md # Code quality reviewer
+├── qa.agent.md            # QA engineer
+├── README.md              # This file (human documentation)
+└── templates/             # Lean report templates agents read at runtime
+    ├── SOLUTIONS_TEMPLATE.md
+    ├── IMPLEMENTATION_PLAN_TEMPLATE.md
+    ├── IMPLEMENTATION_SUMMARY_TEMPLATE.md
+    ├── CODE_REVIEW_TEMPLATE.md
+    └── QA_REPORT_TEMPLATE.md
+```
+
+### Design Philosophy
+
+The agent `.md` files are optimized for **token efficiency** — they contain concise, structured instructions that agents interpret well. Shared context is consolidated in [common.md](common.md) to avoid duplication. Templates are referenced by path rather than embedded inline.
+
+This README serves as the **human-readable documentation** with full explanations, examples, and workflow patterns.
+
+---
+
 ## Artifact System
 
 Agents communicate through markdown documents saved in `.agentwork/`:
@@ -49,12 +76,12 @@ Agents communicate through markdown documents saved in `.agentwork/`:
 ```
 
 **Why artifacts?**
-- Saves tokens — agents read files instead of relying on chat context
-- Creates a paper trail of decisions and findings
-- Enables async workflows (review now, fix later)
-- Each agent knows exactly where to find and save its documents
+- **Saves tokens** — agents read files instead of relying on chat context
+- **Creates a paper trail** of decisions and findings
+- **Enables async workflows** — review now, fix later
+- **Consistent context** — each agent knows exactly where to find and save documents
 
-**Templates** are available in [templates/](templates/) for reference.
+**Templates** are available in [templates/](templates/) for reference. Agents read these at runtime when creating reports.
 
 ---
 
@@ -209,3 +236,6 @@ Instead of pasting code into chat, point agents at files:
 ```
 @code-reviewer review the changes in src/auth/ — see .agentwork/coder/IMPLEMENTATION_auth_2026-02-25.md for context
 ```
+
+### Adding Language/Framework Best Practices
+If you want agents to follow specific coding standards beyond what's in [common.md](common.md), create a best-practices document (e.g., `.github/agents/best-practices-typescript.md`) and reference it in your prompts. The agent files are intentionally lean — they rely on the LLM's built-in knowledge of language idioms and best practices.
