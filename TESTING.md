@@ -1,12 +1,13 @@
 # Testing Your Agent Team
 
-This guide walks through testing your agents with a simple Hello World API application. You'll verify each agent works correctly both independently and as a coordinated team.
+This guide walks through testing your agents with a simple Hello World API application. You'll verify each agent works correctly independently and that they chain together smoothly via handoff buttons.
 
 ## Prerequisites
 
 - Agents are installed in `.github/agents/`
 - You have VS Code with GitHub Copilot enabled
 - You can tag agents with `@agent-name` in Copilot Chat
+- Available agents: `@architect`, `@coder`, `@code-reviewer`, `@qa`
 
 ## Setup: Create a Test Project
 
@@ -243,21 +244,68 @@ Then fix it:
 
 ---
 
-## Test 3: Quality Agent (Testing & Review)
+## Test 3: Code Reviewer Agent (Code Quality)
 
-**Goal:** Verify Quality can write tests and review code.
+**Goal:** Verify Code Reviewer can analyze code and produce structured review reports.
 
-### Test Case 3.1: Write Tests
+### Test Case 3.1: Code Review
 
 ```
-@quality add tests for the /health endpoint
+@code-reviewer review the code in [your main API file]
+```
+
+**Expected Output:**
+- ✅ Reads implementation summary from `.agentwork/coder/` (if available)
+- ✅ Systematic review of the code
+- ✅ Identifies actual issues (if any)
+- ✅ Categorizes: Critical / Important / Suggestions
+- ✅ Provides specific, actionable feedback with file/line references
+- ✅ Acknowledges good practices
+- ✅ Creates review report in `.agentwork/code-review/`
+- ✅ Presents **Route Fixes to Coder** or **Proceed to QA** handoff buttons
+
+**Validation:**
+- [ ] Review report saved to `.agentwork/code-review/`
+- [ ] Report has YAML front matter with `status` and `revision` fields
+- [ ] Feedback is specific (not vague)
+- [ ] Suggestions make sense for your code
+- [ ] Review includes both positives and improvements
+- [ ] Handoff buttons appear in the chat
+
+### Test Case 3.2: Review with Gateway Check
+
+Test that the Code Reviewer enforces the gateway check on the Coder's implementation summary:
+
+1. Do NOT create an implementation summary in `.agentwork/coder/`
+2. Ask: `@code-reviewer review the implementation`
+
+**Expected Output:**
+- ✅ Code Reviewer checks for implementation summary status
+- ✅ Stops and asks the user how to proceed (gateway check fail)
+
+**Validation:**
+- [ ] Agent does NOT proceed without the required upstream artifact
+- [ ] Agent asks user for guidance instead of guessing
+
+---
+
+## Test 4: QA Agent (Testing & Validation)
+
+**Goal:** Verify QA can write tests, run test suites, and validate against requirements.
+
+### Test Case 4.1: Write Integration Tests
+
+```
+@qa add integration tests for the /health endpoint
 ```
 
 **Expected Output:**
 - ✅ Creates test file following project conventions
 - ✅ Tests happy path (200 response, correct structure)
-- ✅ May test edge cases
+- ✅ Tests edge cases and error handling
 - ✅ Uses appropriate testing framework
+- ✅ Creates QA report in `.agentwork/qa/`
+- ✅ Report includes verdict: PASS / FAIL / PASS WITH NOTES
 
 **Validation:**
 Run the tests:
@@ -271,60 +319,69 @@ dotnet test       # .NET
 - [ ] Test file created in correct location
 - [ ] Tests pass
 - [ ] Tests actually validate functionality
+- [ ] QA report saved to `.agentwork/qa/` with YAML status field
 
-### Test Case 3.2: Code Review
+### Test Case 4.2: Validate Against Plan
+
+If you ran the Architect test (1.1) and have a plan in `.agentwork/architect/`:
 
 ```
-@quality review the code in [your main API file]
+@qa verify the implementation against the architect's plan
 ```
 
 **Expected Output:**
-- ✅ Systematic review of the code
-- ✅ Identifies actual issues (if any)
-- ✅ Categorizes: Critical ❌ / Important ⚠️ / Suggestions 💡
-- ✅ Provides specific, actionable feedback
-- ✅ Acknowledges good practices
-
-**Validation:**
-- [ ] Review is thorough and structured
-- [ ] Feedback is specific (not vague)
-- [ ] Suggestions make sense for your code
-- [ ] Review includes both positives and improvements
+- ✅ Cross-references every requirement from the plan
+- ✅ Flags anything missed or partial
+- ✅ Presents **Route Fixes to Coder** handoff if issues found
 
 ---
 
-## Test 4: Orchestrator (Multi-Agent Coordination)
+## Test 5: Handoff Workflow (Agent Coordination)
 
-**Goal:** Verify Orchestrator can coordinate multiple agents for complex tasks.
+**Goal:** Verify agents coordinate through handoff buttons and artifacts, not an orchestrator.
 
-### Test Case 4.1: Full Feature Implementation
+### Test Case 5.1: Full Feature Pipeline via Handoffs
+
+Walk through the complete pipeline using handoff buttons:
 
 ```
-@orchestrator implement a /users endpoint that returns a paginated list of users with proper validation
+Step 1: @architect create a plan to add a /users endpoint that returns a paginated list of users
 ```
 
-**Expected Output:**
+- ✅ Architect presents solutions and asks you to select
+- ✅ After you select, Architect finalizes implementation plan
+- ✅ **Start Implementation** handoff button appears
+- [ ] Click the **Start Implementation** handoff button
 
-**Phase 1: Architecture**
-- ✅ Orchestrator calls Architect first
-- ✅ Architect researches and provides implementation plan
+```
+Step 2: Coder implements (triggered by handoff button)
+```
 
-**Phase 2: Implementation**
-- ✅ Orchestrator delegates coding to Coder
-- ✅ Coder implements based on Architect's plan
+- ✅ Coder reads the plan from `.agentwork/architect/`
+- ✅ Implements the feature with unit tests
+- ✅ Creates implementation summary in `.agentwork/coder/`
+- ✅ **Send to Code Review** handoff button appears
+- [ ] Click the **Send to Code Review** handoff button
 
-**Phase 3: Quality Assurance**
-- ✅ Orchestrator sends to Quality agent
-- ✅ Quality writes tests and reviews
+```
+Step 3: Code Reviewer reviews (triggered by handoff button)
+```
 
-**Final Report:**
-- ✅ Orchestrator summarizes what was completed
-- ✅ Lists all files created/modified
-- ✅ Confirms tests pass
+- ✅ Code Reviewer reads plan and implementation summary
+- ✅ Creates review report in `.agentwork/code-review/`
+- ✅ **Proceed to QA** or **Route Fixes to Coder** handoff button appears
+- [ ] Click **Proceed to QA** (or fix and re-review if needed)
+
+```
+Step 4: QA validates (triggered by handoff button)
+```
+
+- ✅ QA reads all artifacts from `.agentwork/`
+- ✅ Writes integration tests, runs full suite
+- ✅ Creates QA report in `.agentwork/qa/`
 
 **Validation:**
 ```bash
-# Test the endpoint
 curl "http://localhost:5000/users?page=1&limit=10"    # .NET
 # or curl "http://localhost:3000/users?page=1&limit=10"  # Node/Go
 ```
@@ -332,74 +389,86 @@ curl "http://localhost:5000/users?page=1&limit=10"    # .NET
 - [ ] Endpoint works correctly
 - [ ] Pagination is implemented
 - [ ] Tests exist and pass
-- [ ] Code follows project patterns
+- [ ] Artifacts exist in all four `.agentwork/` subdirectories
+- [ ] `.agentwork/progress-log.md` has entries from all agents
 
-### Test Case 4.2: Complex Multi-Step Task
+### Test Case 5.2: Fix Loop via Handoffs
 
-```
-@orchestrator add request logging middleware and also add error handling to all endpoints
-```
+Test the Coder ↔ Code Reviewer loop:
 
-**Expected Output:**
-- ✅ Orchestrator breaks this into phases
-- ✅ May parallelize independent tasks (logging vs error handling)
-- ✅ Coordinates Architect → Coder → Quality
-- ✅ Manages file conflicts (same files may need multiple updates)
-- ✅ Reports completion with summary
+1. Have the Coder implement something with a deliberate gap (e.g., no input validation)
+2. Send to Code Reviewer — it should flag the issue
+3. Click **Route Fixes to Coder** → Coder fixes
+4. Click **Send to Code Review** → Code Reviewer re-reviews
 
 **Validation:**
-```bash
-# Make requests and check logs
-curl http://localhost:5000/health              # .NET
-curl http://localhost:5000/invalid-endpoint    # .NET
-# or use :3000 for Node/Go
-```
-
-- [ ] Logging appears for all requests
-- [ ] Error handling works (proper status codes, error messages)
-- [ ] Tests updated/added
-- [ ] No file conflicts or broken code
+- [ ] Code Reviewer creates report with `status: changes-required`
+- [ ] Coder reads the report and addresses findings
+- [ ] On re-review, Code Reviewer increments `revision` field
+- [ ] Revision History in the report shows both cycles
 
 ---
 
-## Test 5: Agent Interaction Patterns
+## Test 6: Artifact System & Conventions
 
-### Test Case 5.1: Sequential Workflow
+### Test Case 6.1: Status-Driven Workflow
 
-Test that you can manually chain agents:
+Verify that YAML front matter status fields work correctly:
 
-```
-Step 1: @architect design an authentication system with JWT tokens
-
-Step 2: @coder implement the auth system following the architect's plan
-
-Step 3: @quality add tests for the auth system and review the implementation
-```
+1. After running Test 1 (Architect), check: `cat .agentwork/architect/SOLUTIONS_*.md | head -10`
+2. Verify the YAML front matter contains `status: proposed` (before selection) or `status: selected` (after)
+3. After running Test 2 (Coder), check the implementation summary has `status: implemented`
 
 **Validation:**
-- [ ] Each agent stays in their lane (no role overlap)
-- [ ] Later agents can reference earlier agents' work
-- [ ] Final product is complete and tested
+- [ ] Solutions document has valid YAML front matter with `status` and `revision`
+- [ ] Implementation summary has `status: implemented` after completion
+- [ ] Code review report has `status: approved` or `status: changes-required`
+- [ ] QA report has `status: pass`, `status: fail`, or `status: pass-with-notes`
 
-### Test Case 5.2: Agent Refinement
+### Test Case 6.2: Progress Log
 
-Test iterative improvement:
+After running any agent, verify the progress log exists:
 
+```bash
+cat .agentwork/progress-log.md
 ```
-Step 1: @coder add a /products endpoint
 
-Step 2: @quality review the /products code
-
-Step 3: @coder fix the issues identified by the quality agent
-
-Step 4: @quality verify the fixes
-```
+**Expected:** A markdown table with timestamped entries from each agent that ran.
 
 **Validation:**
-- [ ] Quality identifies actual issues
-- [ ] Coder addresses specific feedback
-- [ ] Quality confirms resolution
-- [ ] Iteration works smoothly
+- [ ] File exists at `.agentwork/progress-log.md`
+- [ ] Has table header: Timestamp | Agent | Action | Outcome | Details
+- [ ] Each agent logged a `Started` and `Completed`/`Stopped` entry
+- [ ] Timestamps are ISO 8601 format
+
+### Test Case 6.3: Circuit Breaker (Advanced)
+
+Test the revision limit by forcing multiple review cycles. This requires some deliberate back-and-forth:
+
+1. Have Coder implement something intentionally incomplete
+2. Send to Code Reviewer → gets `changes-required`
+3. Have Coder make a minimal fix, send back to review
+4. Repeat until `revision` hits 3
+
+**Expected:** On the 3rd cycle, the Code Reviewer stops and presents unresolved findings to the user instead of continuing.
+
+**Validation:**
+- [ ] Agent stops at revision 3
+- [ ] Summarizes points of disagreement
+- [ ] Hands decision to user
+
+### Test Case 6.4: Context Isolation
+
+Test that agents work from artifacts, not chat history:
+
+1. In a fresh chat, tell the Coder about a feature in conversation (don't save it anywhere)
+2. Ask: `@code-reviewer review the implementation`
+
+**Expected:** Code Reviewer should look for artifacts in `.agentwork/`, not reference the chat conversation.
+
+**Validation:**
+- [ ] Agent reads from `.agentwork/` rather than relying on chat context
+- [ ] If no artifacts found, agent asks user how to proceed
 
 ---
 
@@ -407,41 +476,58 @@ Step 4: @quality verify the fixes
 
 After completing all tests, verify:
 
-### Architect Agent ✓
+### Architect Agent
 - [ ] Creates detailed implementation plans
 - [ ] Researches codebase and external docs
-- [ ] Recommends specific approaches
+- [ ] Recommends specific approaches with trade-offs
 - [ ] Does NOT write code
 - [ ] Output is actionable for Coder
+- [ ] Saves artifacts to `.agentwork/architect/` with YAML status
+- [ ] Logs to progress log
+- [ ] Presents **Start Implementation** handoff button
 
-### Coder Agent ✓
+### Coder Agent
 - [ ] Writes functional code
 - [ ] Follows existing patterns and style
 - [ ] Implements features correctly
 - [ ] Fixes bugs accurately
-- [ ] Code is clean and maintainable
+- [ ] Writes unit tests (hard gate: all passing)
+- [ ] Saves artifacts to `.agentwork/coder/` with YAML status
+- [ ] Logs to progress log
+- [ ] Presents **Send to Code Review** or **Skip to QA** handoff buttons
 
-### Quality Agent ✓
-- [ ] Writes comprehensive tests
-- [ ] Tests pass and validate functionality
+### Code Reviewer Agent
 - [ ] Reviews code systematically
-- [ ] Provides specific, actionable feedback
-- [ ] Categorizes issues appropriately
+- [ ] Provides specific, actionable feedback with file/line references
+- [ ] Categorizes issues by severity (Critical / Important / Suggestions)
+- [ ] Does NOT write code or fix issues
+- [ ] Saves artifacts to `.agentwork/code-review/` with YAML status
+- [ ] Increments revision on re-reviews
+- [ ] Stops at revision 3 (circuit breaker)
+- [ ] Presents **Route Fixes to Coder** or **Proceed to QA** handoff buttons
 
-### Orchestrator Agent ✓
-- [ ] Coordinates multiple agents effectively
-- [ ] Breaks down complex tasks
-- [ ] Manages dependencies correctly
-- [ ] Prevents file conflicts
-- [ ] Provides clear progress updates
-- [ ] Delivers complete solutions
+### QA Agent
+- [ ] Writes comprehensive integration tests
+- [ ] Tests pass and validate functionality
+- [ ] Validates against Architect's plan requirements
+- [ ] Does NOT fix code — reports issues
+- [ ] Saves artifacts to `.agentwork/qa/` with YAML status
+- [ ] Presents **Route Fixes to Coder** handoff button when issues found
 
-### Overall Team ✓
+### Conventions & Artifact System
+- [ ] Artifacts have YAML front matter with `status` and `revision`
+- [ ] Gateway checks prevent agents from running out of order
+- [ ] Progress log tracks all agent activity with timestamps
+- [ ] Circuit breaker stops infinite loops at revision 3
+- [ ] Context isolation: agents work from files, not chat history
+- [ ] Handoff buttons appear and work correctly
+
+### Overall Team
 - [ ] Agents work independently
-- [ ] Agents can be chained manually
-- [ ] Orchestrator coordinates multi-step work
+- [ ] Agents chain together via handoff buttons
 - [ ] No role confusion (agents stay in their lane)
 - [ ] Output quality is consistently good
+- [ ] `.agentwork/` has a complete paper trail
 
 ---
 
@@ -453,9 +539,9 @@ After completing all tests, verify:
 
 **Solutions:**
 - Verify agents are in `.github/agents/` directory
-- Check agent file names match: `architect.agent.md`, `coder.agent.md`, etc.
+- Check agent file names match: `architect.agent.md`, `coder.agent.md`, `code-reviewer.agent.md`, `qa.agent.md`
 - Restart VS Code to reload agent definitions
-- Try using full name: `@Architect` (capital A)
+- Try using the exact name from the agent's YAML frontmatter
 
 ### Agent Ignoring Instructions
 
@@ -464,35 +550,55 @@ After completing all tests, verify:
 **Solutions:**
 - Check the agent `.md` file has clear role boundaries
 - Be more explicit in your request: "don't write code, just plan"
-- The agent might be trying to be helpful - redirect them
+- The agent might be trying to be helpful — redirect them
 
-### Orchestrator Not Delegating
+### Handoff Buttons Not Appearing
 
-**Problem:** Orchestrator does work itself instead of calling other agents
+**Problem:** Agent completes work but no handoff buttons show in chat
 
 **Solutions:**
-- Make task more explicitly multi-step: "design AND implement AND test"
-- Check Orchestrator has `agent` tool enabled in its config
-- Try phrasing: "@orchestrator coordinate the team to [task]"
+- Check that the agent's YAML frontmatter has `handoffs:` configured with `send: false`
+- Verify the `agent:` field in each handoff matches the target agent's filename (e.g., `agent: coder` matches `coder.agent.md`)
+- Ensure the agent's workflow ends at a clear terminal state where handoff is appropriate
+- Restart VS Code to reload agent definitions
+
+### Gateway Check Blocking Unexpectedly
+
+**Problem:** Agent refuses to start, says upstream status doesn't match
+
+**Solutions:**
+- Check the upstream artifact's YAML front matter `status` field
+- The previous agent may not have set the status correctly
+- Manually update the `status` field in the artifact to unblock
+- Example: set `status: implemented` in `.agentwork/coder/IMPLEMENTATION_*.md`
 
 ### Agents Conflicting on Same Files
 
 **Problem:** Multiple agents tried to edit the same file simultaneously
 
 **Solutions:**
-- This shouldn't happen with Orchestrator (it prevents this)
-- If manually chaining, complete each agent's work before calling next
-- Let Orchestrator handle the coordination
+- Complete each agent's work before clicking the handoff button
+- Each agent should only modify files in its own `.agentwork/` subdirectory
+- Source code should only be modified by the Coder agent
 
 ### Tests Created But Don't Run
 
-**Problem:** Quality created tests but they fail or don't execute
+**Problem:** QA created tests but they fail or don't execute
 
 **Solutions:**
 - Check test file is in correct location
 - Verify testing framework is installed
 - Agent might have created tests for wrong framework
-- Ask: "@quality why are the tests failing?"
+- Ask: `@qa why are the tests failing?`
+
+### Progress Log Missing Entries
+
+**Problem:** `.agentwork/progress-log.md` doesn't have entries from all agents
+
+**Solutions:**
+- The agent may have failed before logging start—check for errors
+- If the file doesn't exist, the first agent should create it
+- Manually create the file with the table header if needed
 
 ---
 
@@ -503,8 +609,9 @@ Once all tests pass:
 1. **Clean up:** Delete the test API project or keep it as a sandbox
 2. **Use on real projects:** Try agents on your actual development work
 3. **Customize:** Edit agent `.md` files based on what you learned
-4. **Create variants:** Make specialized agents for your tech stack
-5. **Document patterns:** Note which workflows work best for you
+4. **Check common.md:** Adjust shared conventions (gateway checks, progress tracking) to your needs
+5. **Create variants:** Make specialized agents for your tech stack
+6. **Document patterns:** Note which workflows and handoff paths work best for you
 
 ## Advanced Testing
 
@@ -513,8 +620,9 @@ Want to go further?
 - Test with a real project (not hello world)
 - Test error scenarios (bad input, missing dependencies)
 - Test with different languages/frameworks
-- Stress test the orchestrator with very complex tasks
-- Benchmark performance (simple task: single agent vs orchestrator)
+- Test the Coder's escalation path (deliberate blocker → Escalate to Architect handoff)
+- Test circuit breakers by forcing 3 revision cycles
+- Verify progress log completeness after a full pipeline run
 
 ---
 
@@ -524,11 +632,15 @@ As you test, improve your agents:
 
 **If agents are too verbose:** Edit their `.md` files to be more concise
 
-**If agents miss context:** Add more specific instructions about researching first
+**If agents miss context:** Check that the numbered Context steps cover the right files
 
 **If code quality varies:** Add explicit style guidelines to Coder agent
 
-**If tests are weak:** Enhance Quality agent's test strategy section
+**If tests are weak:** Enhance QA agent's integration test standards section
+
+**If handoffs don't chain smoothly:** Check YAML status fields in artifacts — they're the glue between agents
+
+**If agents loop forever:** The circuit breaker should stop at revision 3 — verify this is working
 
 Remember: These agents are tools you control and customize. Test, iterate, and adapt them to your workflow!
 
@@ -537,24 +649,31 @@ Remember: These agents are tools you control and customize. Test, iterate, and a
 ## Quick Reference: Test Commands
 
 ```bash
-# Simple single-agent tests
+# Single-agent tests
 @architect create a plan for [feature]
 @coder implement [specific task]
-@quality add tests for [component]
-@quality review [file]
+@code-reviewer review the implementation
+@qa add integration tests for [component]
 
-# Orchestrated complex test
-@orchestrator implement [full feature] with tests
-
-# Manual coordination test
+# Full pipeline via handoff buttons
 1. @architect design [feature]
-2. @coder implement based on architect's plan
-3. @quality test and review the implementation
+2. Click "Start Implementation" → Coder implements
+3. Click "Send to Code Review" → Code Reviewer reviews
+4. Click "Proceed to QA" → QA validates
+
+# Fix loop via handoff buttons
+1. @code-reviewer review the implementation
+2. Click "Route Fixes to Coder" → Coder fixes
+3. Click "Send to Code Review" → re-review
+
+# Check artifacts
+ls .agentwork/architect/ .agentwork/coder/ .agentwork/code-review/ .agentwork/qa/
+cat .agentwork/progress-log.md
+head -5 .agentwork/*/SOLUTIONS_*.md   # Check YAML status
 
 # Verification commands (adjust for your language)
 dotnet test / npm test / pytest / go test
 curl http://localhost:5000/[endpoint]  # .NET (or :3000 for Node/Go)
-dotnet format / npm run lint / flake8 / golint
 ```
 
-Happy testing! 🧪
+Happy testing!

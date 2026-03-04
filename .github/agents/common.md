@@ -1,5 +1,7 @@
 # Shared Agent Context
 
+These conventions apply to all agents. Each agent must follow these in addition to its own agent-specific rules.
+
 ## Artifact System
 
 Agents communicate through markdown artifacts in `.agentwork/`:
@@ -9,35 +11,57 @@ Agents communicate through markdown artifacts in `.agentwork/`:
 ├── architect/      # SOLUTIONS_[slug]_YYYY-MM-DD.md
 ├── coder/          # IMPLEMENTATION_[slug]_YYYY-MM-DD.md
 ├── code-review/    # CODE_REVIEW_[slug]_YYYY-MM-DD.md
-└── qa/             # QA_REPORT_[slug]_YYYY-MM-DD.md
+├── qa/             # QA_REPORT_[slug]_YYYY-MM-DD.md
+└── progress-log.md # Cross-agent audit trail
 ```
 
 Each agent reads previous agents' artifacts for context instead of relying on chat history.
-
-## Gather Context (All Agents)
-
-Before starting work:
-1. Read the Architect's plan from `.agentwork/architect/` (if it exists)
-2. Read the Coder's implementation summary from `.agentwork/coder/` (if applicable)
-3. Read the Code Review report from `.agentwork/code-review/` (if applicable)
-4. Note any deviations flagged by previous agents
-
-Only read artifacts relevant to your role and the current pipeline stage.
 
 ## Artifact Rules
 
 - **Naming:** `[TYPE]_[feature-slug]_YYYY-MM-DD.md`
 - **Location:** Always save to your agent's subdirectory under `.agentwork/`
-- **References:** When delegating or handing off, specify the full artifact path
+- **References:** When handing off, specify the full artifact path
 - **Templates:** Read from `.github/agents/templates/` for report structure
 
-## Agent Handoff Protocol
+## Context Isolation
 
-Every handoff must include:
-- What to do
-- Where to find relevant artifacts
-- Where to save output
-- Constraints from previous steps
+Base all work exclusively on the files referenced in your Context section. Disregard any prior conversation history, chat messages, or context from previous agent interactions. Only read artifacts relevant to your role and the current pipeline stage.
+
+## Gateway Checks
+
+Before doing any work, verify that your required input file has the expected status in its YAML front matter (each agent's Context section specifies the exact status to check). If the status does not match, stop and ask the user how to proceed. Do not guess, assume, or proceed with incomplete inputs.
+
+## Status Management
+
+Each artifact document has a `status` field in its YAML front matter. When your work is complete, set the `status` field to the appropriate terminal status as defined in your agent's workflow. Never flip the status before the document is fully written.
+
+## Revision Tracking & Circuit Breakers
+
+Documents that go through review cycles track a `revision` field in YAML front matter. Each cycle increments the revision. **If a document reaches revision 3 or greater, stop.** Do not continue the cycle. Summarize the unresolved points of disagreement and present them to the user to decide how to proceed.
+
+This prevents infinite loops between agents.
+
+## File Scope
+
+Only modify the files explicitly listed in your agent's Rules section. Never modify files owned by other agents, even if you can see them.
+
+## Output Self-Validation
+
+Before marking any document as complete, re-read your output and verify that every section defined in the template has been filled in. If any section is empty or contains only template placeholder text, do not mark the document as done — finish the section or document why it was intentionally left empty.
+
+## Progress Tracking
+
+Every agent must update `.agentwork/progress-log.md` at two points during execution:
+
+1. **On start** — Append a row: `| <ISO 8601 timestamp> | <Agent Name> | Started | — | <what you are about to do> |`
+2. **On finish** — Append a row: `| <ISO 8601 timestamp> | <Agent Name> | Completed/Stopped/Escalated | <brief result> | <additional context> |`
+
+This file is append-only. Never edit or remove existing entries. If the file does not exist, create it with the table header:
+```
+| Timestamp | Agent | Action | Outcome | Details |
+|-----------|-------|--------|---------|---------|
+```
 
 ## User Checkpoints
 

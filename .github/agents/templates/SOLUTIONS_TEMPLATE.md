@@ -1,7 +1,12 @@
+---
+status: draft
+revision: 0
+valid-statuses: [draft, proposed, selected, revision-needed]
+---
+
 # Solution Proposals: [Feature Name]
 
 **Date:** YYYY-MM-DD
-**Status:** AWAITING SELECTION
 **Request:** [Brief description]
 
 ---
@@ -48,5 +53,12 @@
 ## Edge Cases & Considerations
 
 ## Testing Strategy
+
+## Revision History
+
+<!-- Append-only. Each revision adds a new entry. -->
+
+| Revision | Date | Summary |
+|----------|------|---------|
 
 ## Open Questions

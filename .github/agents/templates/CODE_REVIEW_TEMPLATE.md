@@ -1,7 +1,12 @@
+---
+status: draft
+revision: 0
+valid-statuses: [draft, in-progress, approved, changes-required, needs-discussion]
+---
+
 # Code Review Report: [Feature Name]
 
 **Date:** YYYY-MM-DD
-**Status:** APPROVE / REQUEST CHANGES / NEEDS DISCUSSION
 **Reviewer:** Code Reviewer Agent
 **Implementation:** .agentwork/coder/IMPLEMENTATION_[slug]_YYYY-MM-DD.md
 **Architect Plan:** .agentwork/architect/SOLUTIONS_[slug]_YYYY-MM-DD.md
@@ -70,5 +75,12 @@
 ## Performance Review
 
 ## Positive Notes
+
+## Revision History
+
+<!-- Append-only. Each revision adds a new entry. -->
+
+| Revision | Date | Verdict | Summary |
+|----------|------|---------|--------|
 
 ## Action Items for Coder

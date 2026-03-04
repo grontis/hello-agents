@@ -1,7 +1,13 @@
+---
+status: draft
+revision: 0
+valid-statuses: [draft, ready]
+---
+
 # Implementation Plan: [Feature Name]
 
 **Date:** YYYY-MM-DD
-**Status:** SELECTED — [Solution Name]
+**Selected Solution:** [Solution Name]
 **Selected By:** User
 
 ---

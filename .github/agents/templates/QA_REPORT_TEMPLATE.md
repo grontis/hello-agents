@@ -1,7 +1,12 @@
+---
+status: draft
+revision: 0
+valid-statuses: [draft, in-progress, pass, fail, pass-with-notes]
+---
+
 # QA Report: [Feature Name]
 
 **Date:** YYYY-MM-DD
-**Status:** PASS / FAIL / PASS WITH NOTES
 **QA Engineer:** QA Agent
 **Implementation:** .agentwork/coder/IMPLEMENTATION_[slug]_YYYY-MM-DD.md
 **Code Review:** .agentwork/code-review/CODE_REVIEW_[slug]_YYYY-MM-DD.md
@@ -69,6 +74,13 @@
 - **Fix Needed:**
 
 ---
+
+## Revision History
+
+<!-- Append-only. Each revision adds a new entry. -->
+
+| Revision | Date | Verdict | Summary |
+|----------|------|---------|--------|
 
 ## Performance Notes
 
