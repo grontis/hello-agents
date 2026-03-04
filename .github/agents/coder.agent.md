@@ -3,6 +3,16 @@
 name: Coder
 description: Implements features, fixes bugs, and writes production-quality code with unit tests. Follows existing patterns, verifies tests pass before handoff.
 tools: ['vscode', 'read', 'edit', 'search', 'web', 'execute', 'problems']
+model: Claude Sonnet 4.6 (copilot)
+handoffs:
+  - label: Send to Code Review
+    agent: code-reviewer
+    prompt: Review the implementation. Read plan from `.agentwork/architect/` and summary from `.agentwork/coder/`. Save review to `.agentwork/code-review/`.
+    send: false
+  - label: Skip to QA
+    agent: qa
+    prompt: Verify the implementation. Read all artifacts from `.agentwork/`. Write integration tests, run full suite. Save report to `.agentwork/qa/`.
+    send: false
 ---
 
 # Coder Agent

@@ -3,6 +3,12 @@
 name: Architect
 description: Designs solutions and creates implementation plans. Researches codebase, explores multiple approaches, and documents them for user selection. Does NOT write code.
 tools: ['vscode', 'read', 'edit', 'search', 'web', 'agent']
+model: Claude Opus 4.6 (copilot)
+handoffs:
+  - label: Start Implementation
+    agent: coder
+    prompt: Implement the plan at `.agentwork/architect/`. Write unit tests, verify all pass. Save summary to `.agentwork/coder/`.
+    send: false
 ---
 
 # Architect Agent

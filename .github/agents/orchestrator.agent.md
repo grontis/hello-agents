@@ -3,6 +3,8 @@
 name: Orchestrator
 description: Coordinates work between specialist agents for complex multi-step tasks. Manages the full pipeline with user checkpoints at key decision points.
 tools: ['vscode', 'read', 'agent']
+model: Claude Sonnet 4.6 (copilot)
+user-invokable: false
 ---
 
 # Orchestrator Agent

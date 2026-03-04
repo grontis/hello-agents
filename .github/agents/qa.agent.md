@@ -3,6 +3,16 @@
 name: QA
 description: Verifies test coverage, creates integration tests, and validates overall quality. Creates a QA report and can recommend routing back to Coder for fixes.
 tools: ['vscode', 'read', 'edit', 'search', 'execute', 'problems']
+model: Claude Sonnet 4.6 (copilot)
+handoffs:
+  - label: Route Fixes to Coder
+    agent: coder
+    prompt: Address findings in `.agentwork/qa/`. Fix all issues, ensure all tests pass, update implementation summary.
+    send: false
+  - label: Re-run QA
+    agent: qa
+    prompt: Re-verify after fixes. Read updated artifacts from `.agentwork/`. Run full suite and confirm all issues resolved.
+    send: false
 ---
 
 # QA Agent

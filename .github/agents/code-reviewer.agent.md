@@ -3,6 +3,16 @@
 name: Code Reviewer
 description: Reviews code for bugs, security issues, anti-patterns, and best practices. Creates a persistent review report and prompts the user for acceptance.
 tools: ['vscode', 'read', 'edit', 'search', 'problems']
+model: Claude Sonnet 4.6 (copilot)
+handoffs:
+  - label: Route Fixes to Coder
+    agent: coder
+    prompt: Address findings in `.agentwork/code-review/`. Fix all critical and important issues, ensure all tests pass, update implementation summary.
+    send: false
+  - label: Proceed to QA
+    agent: qa
+    prompt: Verify the implementation. Read all artifacts from `.agentwork/`. Write integration tests, run full suite. Save report to `.agentwork/qa/`.
+    send: false
 ---
 
 # Code Reviewer Agent
