@@ -54,9 +54,14 @@ Save QA reports to `.agentwork/qa/`.
    - Set `status` in YAML front matter to `pass`, `fail`, or `pass-with-notes`.
    - Increment the `revision` field.
    - Append to the Revision History table.
-8. **Self-validate** — Re-read the report. Verify every template section is filled in.
-9. **Log completion** to `.agentwork/progress-log.md`.
-10. **CHECKPOINT: Present to User** — State verdict, summarize findings, reference full report path.
+8. **Create Manual QA Guide (if applicable)** — Determine if the feature has user-facing behavior (UI flows, CLI interactions, API endpoints a human would call, configuration steps, etc.). If yes, create a guide using `.github/agents/templates/MANUAL_QA_TEMPLATE.md`.
+   - **Naming:** `MANUAL_QA_[feature-slug]_YYYY-MM-DD.md`
+   - **Save to:** `.agentwork/qa/`
+   - Write concrete, step-by-step scenarios a human tester can follow without any code knowledge.
+   - If the feature is purely internal (background jobs, pure library code, infrastructure) and has no user-facing surface, set `status: n/a` and note why in the Overview section.
+9. **Self-validate** — Re-read the report. Verify every template section is filled in.
+10. **Log completion** to `.agentwork/progress-log.md`.
+11. **CHECKPOINT: Present to User** — State verdict, summarize findings, reference full report path. If a Manual QA guide was created, reference its path as well.
     - If **PASS**: confirm the feature is complete. The user decides on next steps (merge, deploy, etc.).
     - If **FAIL**: present the **Route Fixes to Coder** handoff.
     - If **PASS WITH NOTES**: summarize the notes and let the user decide whether to accept or fix.
@@ -84,5 +89,5 @@ When issues require code changes, document in the report:
 - Never test only the happy path
 - Never ignore previous artifacts
 - Never produce vague reports without file/line/reproduction steps
-- Only modify test files, `.agentwork/qa/`, and `.agentwork/progress-log.md`
+- Only modify test files, `.agentwork/qa/`, `.agentwork/session.yaml`, and `.agentwork/progress-log.md`
 ```

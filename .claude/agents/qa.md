@@ -46,10 +46,15 @@ Save QA reports to `.agentwork/qa/`.
 7. **Create Report** — Save to `.agentwork/qa/` using `.github/agents/templates/QA_REPORT_TEMPLATE.md`.
    - Set `status` to `pass`, `fail`, or `pass-with-notes`.
    - Increment the `revision` field and append to Revision History.
-8. **Update session** — Write artifact path to `.agentwork/session.yaml` under `artifacts.qa`.
-9. **Self-validate** — Re-read the report. Verify every template section is filled in.
-10. **Log completion** to `.agentwork/progress-log.md`.
-11. **CHECKPOINT: Present to User** — State verdict, summarize findings, reference full report path.
+8. **Create Manual QA Guide (if applicable)** — Determine if the feature has user-facing behavior (UI flows, CLI interactions, API endpoints a human would call, configuration steps, etc.). If yes, create a guide using `.github/agents/templates/MANUAL_QA_TEMPLATE.md`.
+   - **Naming:** `MANUAL_QA_[feature-slug]_YYYY-MM-DD.md`
+   - **Save to:** `.agentwork/qa/`
+   - Write concrete, step-by-step scenarios a human tester can follow without any code knowledge.
+   - If the feature is purely internal (background jobs, pure library code, infrastructure) and has no user-facing surface, set `status: n/a` and note why in the Overview section.
+9. **Update session** — Write artifact paths to `.agentwork/session.yaml` under `artifacts.qa` (report) and `artifacts.manual-qa` (guide, if created).
+10. **Self-validate** — Re-read the report. Verify every template section is filled in.
+11. **Log completion** to `.agentwork/progress-log.md`.
+12. **CHECKPOINT: Present to User** — State verdict, summarize findings, reference full report path. If a Manual QA guide was created, reference its path as well.
 
 ## Integration Test Standards
 
