@@ -71,8 +71,23 @@ Save reviews to `.agentwork/code-review/`.
 
 ## Next Steps
 
-**Approved** → invoke **qa**: "Verify implementation. Read all artifacts from `.agentwork/`."
+**STOP. Do not invoke the next agent automatically. Always wait for explicit user instruction.**
 
-**Changes Required** → invoke **coder**: "Fix findings in `.agentwork/code-review/[filename]`."
+Present the verdict and the following options to the user and await their decision:
 
-**Needs Discussion** → share report path with user, ask how to proceed before routing to any agent.
+**If Approved:**
+> "Code review passed. Report saved to `.agentwork/code-review/[filename]`.
+> Next step options:
+> - **Proceed to QA** — run the `qa` agent to verify the implementation
+> - **Done** — no further pipeline steps needed"
+
+**If Changes Required:**
+> "Code review found issues requiring fixes. Report saved to `.agentwork/code-review/[filename]`.
+> Next step options:
+> - **Route to Coder** — run the `coder` agent to address the findings
+> - **Review findings first** — discuss before deciding"
+
+**If Needs Discussion:**
+> "Review surfaced questions requiring your input. Report saved to `.agentwork/code-review/[filename]`. Please review and let me know how to proceed."
+
+The user must explicitly choose before any next agent is invoked.

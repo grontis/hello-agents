@@ -109,6 +109,21 @@ Report: what changed, files modified/created, test count and results, artifact p
 
 ## Next Steps
 
-**Implemented** → invoke **code-reviewer**: "Review implementation. Read plan from `.agentwork/architect/` and summary from `.agentwork/coder/`. Save review to `.agentwork/code-review/`."
+**STOP. Do not invoke the next agent automatically. Always wait for explicit user instruction.**
 
-**Blocked** → invoke **architect**: "Implementation revealed issues. Review blockers in `.agentwork/coder/[filename]`."
+Present the following options to the user and await their decision:
+
+**If Implemented:**
+> "Implementation complete. Artifact saved to `.agentwork/coder/[filename]`. Tests: [X passing].
+> Next step options:
+> - **Code Review** — run the `code-reviewer` agent to review this implementation
+> - **Skip to QA** — run the `qa` agent directly
+> - **Done** — no further pipeline steps needed"
+
+**If Blocked:**
+> "Implementation blocked. Blocker documented in `.agentwork/coder/[filename]`.
+> Next step options:
+> - **Escalate to Architect** — run the `architect` agent to resolve the blocker
+> - **Provide guidance** — give me direction to continue"
+
+The user must explicitly choose before any next agent is invoked.

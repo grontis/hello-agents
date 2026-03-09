@@ -95,6 +95,14 @@ After user selection:
 
 ## Next Steps
 
-Plan saved at `.agentwork/architect/` with `status: ready`.
+**STOP. Do not invoke the next agent automatically. Always wait for explicit user instruction.**
 
-Invoke **coder**: "Implement plan at `.agentwork/architect/[filename]`. Write unit tests, verify all pass. Save summary to `.agentwork/coder/`."
+Present the plan summary and the following options to the user and await their decision:
+
+> "Plan complete. Saved to `.agentwork/architect/[filename]`.
+> Please review the proposed solution(s) above. Next step options:
+> - **Proceed to implementation** — run the `coder` agent to implement this plan
+> - **Revise the plan** — give feedback and I'll update the approach
+> - **Done** — no further steps needed"
+
+The user must explicitly choose before any next agent is invoked.

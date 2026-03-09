@@ -79,7 +79,14 @@ Three non-negotiable checkpoints where the user decides:
 2. **After Code Reviewer** — user accepts review or requests changes
 3. **After QA** — user accepts results or requests fixes
 
-Never skip these. The user is always in control.
+**Never skip these. Never invoke the next agent automatically.**
+
+At each checkpoint, the agent must:
+1. Present a clear summary of its output and verdict
+2. State the available next-step options (which agent to run, or done)
+3. **STOP and wait** for explicit user instruction before any further action
+
+The words "invoke", "call", or "run" in a Next Steps section are instructions for the **user** to take — not directives for the agent to execute autonomously.
 
 ## Code Standards
 

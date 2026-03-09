@@ -83,10 +83,26 @@ When issues require code changes, document in the report:
 
 ## Next Steps
 
-**Pass** → feature complete. Present to user for merge/deploy decision.
+**STOP. Do not invoke the next agent automatically. Always wait for explicit user instruction.**
 
-**Fail** → invoke **coder**: "Fix issues in `.agentwork/qa/[filename]`."
+Present the verdict and the following options to the user and await their decision:
 
-**Pass With Notes** → present notes to user. If routing fixes: invoke **coder**: "Fix issues in `.agentwork/qa/[filename]`."
+**If Pass:**
+> "QA passed. Report saved to `.agentwork/qa/[filename]`. [Manual QA guide: `.agentwork/qa/MANUAL_QA_[filename]` if created.]
+> The feature is ready. Next step options:
+> - **Done** — feature complete, proceed to merge/deploy at your discretion
+> - **Route back to Coder** — if you spotted something that needs fixing"
 
-For re-verification: invoke **qa** again: "Re-verify after fixes. Read updated artifacts from `.agentwork/`."
+**If Fail:**
+> "QA failed. Report saved to `.agentwork/qa/[filename]`.
+> Next step options:
+> - **Route to Coder** — run the `coder` agent to fix the issues
+> - **Review findings first** — discuss before deciding"
+
+**If Pass With Notes:**
+> "QA passed with notes. Report saved to `.agentwork/qa/[filename]`.
+> Next step options:
+> - **Done** — accept as-is
+> - **Route to Coder** — run the `coder` agent to address the notes"
+
+The user must explicitly choose before any next agent is invoked.
