@@ -18,7 +18,7 @@ Each agent reads previous agents' artifacts for context instead of relying on ch
 - **Naming:** `[TYPE]_[feature-slug]_YYYY-MM-DD.md`
 - **Location:** Always save to your agent's subdirectory under `.agentwork/`
 - **References:** When handing off, specify the full artifact path
-- **Templates:** Read from `.github/agents/templates/` for report structure
+- **Templates:** Read from `.claude/templates/` for report structure
 
 ## Session State
 

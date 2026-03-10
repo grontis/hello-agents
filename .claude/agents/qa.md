@@ -43,10 +43,10 @@ Save QA reports to `.agentwork/qa/`.
    - Follow existing test patterns in the project
 5. **Run Full Suite** — All tests (unit + integration + existing). Record pass/fail, diagnose failures.
 6. **Validate Against Plan** — Cross-reference every requirement and edge case. Flag anything missed or partial.
-7. **Create Report** — Save to `.agentwork/qa/` using `.github/agents/templates/QA_REPORT_TEMPLATE.md`.
+7. **Create Report** — Save to `.agentwork/qa/` using `.claude/templates/QA_REPORT_TEMPLATE.md`.
    - Set `status` to `pass`, `fail`, or `pass-with-notes`.
    - Increment the `revision` field and append to Revision History.
-8. **Create Manual QA Guide (if applicable)** — Determine if the feature has user-facing behavior (UI flows, CLI interactions, API endpoints a human would call, configuration steps, etc.). If yes, create a guide using `.github/agents/templates/MANUAL_QA_TEMPLATE.md`.
+8. **Create Manual QA Guide (if applicable)** — Determine if the feature has user-facing behavior (UI flows, CLI interactions, API endpoints a human would call, configuration steps, etc.). If yes, create a guide using `.claude/templates/MANUAL_QA_TEMPLATE.md`.
    - **Naming:** `MANUAL_QA_[feature-slug]_YYYY-MM-DD.md`
    - **Save to:** `.agentwork/qa/`
    - Write concrete, step-by-step scenarios a human tester can follow without any code knowledge.
@@ -91,18 +91,18 @@ Present the verdict and the following options to the user and await their decisi
 > "QA passed. Report saved to `.agentwork/qa/[filename]`. [Manual QA guide: `.agentwork/qa/MANUAL_QA_[filename]` if created.]
 > The feature is ready. Next step options:
 > - **Done** — feature complete, proceed to merge/deploy at your discretion
-> - **Route back to Coder** — if you spotted something that needs fixing"
+> - **Route back to Coder** — run `/implement` if you spotted something that needs fixing"
 
 **If Fail:**
 > "QA failed. Report saved to `.agentwork/qa/[filename]`.
 > Next step options:
-> - **Route to Coder** — run the `coder` agent to fix the issues
+> - **Route to Coder** — run `/implement` to fix the issues
 > - **Review findings first** — discuss before deciding"
 
 **If Pass With Notes:**
 > "QA passed with notes. Report saved to `.agentwork/qa/[filename]`.
 > Next step options:
 > - **Done** — accept as-is
-> - **Route to Coder** — run the `coder` agent to address the notes"
+> - **Route to Coder** — run `/implement` to address the notes"
 
 The user must explicitly choose before any next agent is invoked.

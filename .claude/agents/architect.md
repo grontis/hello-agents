@@ -43,7 +43,7 @@ Save all documents to `.agentwork/architect/`.
 
 ### Phase 2: Document Solutions
 
-1. Create `.agentwork/architect/SOLUTIONS_[slug]_YYYY-MM-DD.md` using the template at `.github/agents/templates/SOLUTIONS_TEMPLATE.md`.
+1. Create `.agentwork/architect/SOLUTIONS_[slug]_YYYY-MM-DD.md` using the template at `.claude/templates/SOLUTIONS_TEMPLATE.md`.
 2. Set the `status` field in YAML front matter to `proposed`.
 3. If this is a revision, increment the `revision` field and append to the Revision History section.
 4. Write or update `.agentwork/session.yaml` with `feature_slug` and `artifacts.architect` pointing to this file.
@@ -60,7 +60,7 @@ Save all documents to `.agentwork/architect/`.
 After user selects:
 
 1. Update the SOLUTIONS document — set `status` to `selected`.
-2. Create a separate implementation plan using `.github/agents/templates/IMPLEMENTATION_PLAN_TEMPLATE.md` in the same artifact directory, or expand the SOLUTIONS document with a focused implementation plan section.
+2. Create a separate implementation plan using `.claude/templates/IMPLEMENTATION_PLAN_TEMPLATE.md` in the same artifact directory, or expand the SOLUTIONS document with a focused implementation plan section.
 3. Set the implementation plan `status` to `ready`.
 4. Expand implementation steps with full detail the Coder needs — specify exact files, functions, and changes.
 5. Log completion to `.agentwork/progress-log.md`.
@@ -101,7 +101,7 @@ Present the plan summary and the following options to the user and await their d
 
 > "Plan complete. Saved to `.agentwork/architect/[filename]`.
 > Please review the proposed solution(s) above. Next step options:
-> - **Proceed to implementation** — run the `coder` agent to implement this plan
+> - **Proceed to implementation** — run `/implement`
 > - **Revise the plan** — give feedback and I'll update the approach
 > - **Done** — no further steps needed"
 

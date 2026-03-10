@@ -38,7 +38,7 @@ Save reviews to `.agentwork/code-review/`.
 3. **Verify Plan Adherence** — Architecture matches? Component boundaries respected? Interfaces match contracts? Deviations justified?
 4. **Review Code** — Read ALL modified files. Check: bugs, logic errors, error handling, security, performance, project conventions, readability.
 5. **Review Unit Tests** — Comprehensive? Meaningful assertions? Descriptive names? Coverage gaps?
-6. **Create Report** — Save to `.agentwork/code-review/` using `.github/agents/templates/CODE_REVIEW_TEMPLATE.md`.
+6. **Create Report** — Save to `.agentwork/code-review/` using `.claude/templates/CODE_REVIEW_TEMPLATE.md`.
    - Set `status` to `approved`, `changes-required`, or `needs-discussion`.
    - Increment the `revision` field and append to Revision History.
 7. **Update session** — Write artifact path to `.agentwork/session.yaml` under `artifacts.code_review`.
@@ -78,13 +78,13 @@ Present the verdict and the following options to the user and await their decisi
 **If Approved:**
 > "Code review passed. Report saved to `.agentwork/code-review/[filename]`.
 > Next step options:
-> - **Proceed to QA** — run the `qa` agent to verify the implementation
+> - **Proceed to QA** — run `/qa`
 > - **Done** — no further pipeline steps needed"
 
 **If Changes Required:**
 > "Code review found issues requiring fixes. Report saved to `.agentwork/code-review/[filename]`.
 > Next step options:
-> - **Route to Coder** — run the `coder` agent to address the findings
+> - **Route to Coder** — run `/implement` to address the findings
 > - **Review findings first** — discuss before deciding"
 
 **If Needs Discussion:**

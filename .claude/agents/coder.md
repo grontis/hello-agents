@@ -58,7 +58,7 @@ The Architect's plan is your primary source of truth when it exists:
    - Cross-check against Architect's plan
    - **Do NOT hand off with failing tests**
 7. **Polish** — Remove debug statements, review readability.
-8. **Document** — Create implementation summary using `.github/agents/templates/IMPLEMENTATION_SUMMARY_TEMPLATE.md`. Set `status` to `implemented`.
+8. **Document** — Create implementation summary using `.claude/templates/IMPLEMENTATION_SUMMARY_TEMPLATE.md`. Set `status` to `implemented`.
 9. **Update session** — Write artifact path to `.agentwork/session.yaml` under `artifacts.coder`.
 10. **Self-validate** — Re-read the summary and verify every template section is filled in.
 11. **Log completion** to `.agentwork/progress-log.md`.
@@ -116,14 +116,14 @@ Present the following options to the user and await their decision:
 **If Implemented:**
 > "Implementation complete. Artifact saved to `.agentwork/coder/[filename]`. Tests: [X passing].
 > Next step options:
-> - **Code Review** — run the `code-reviewer` agent to review this implementation
-> - **Skip to QA** — run the `qa` agent directly
+> - **Code Review** — run `/review`
+> - **Skip to QA** — run `/qa`
 > - **Done** — no further pipeline steps needed"
 
 **If Blocked:**
 > "Implementation blocked. Blocker documented in `.agentwork/coder/[filename]`.
 > Next step options:
-> - **Escalate to Architect** — run the `architect` agent to resolve the blocker
+> - **Escalate to Architect** — run `/architect` with the blocker context
 > - **Provide guidance** — give me direction to continue"
 
 The user must explicitly choose before any next agent is invoked.

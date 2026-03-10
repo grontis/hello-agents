@@ -13,8 +13,9 @@ chat panel, and it takes over that conversation turn.
 In **Claude Code**, there is no dropdown. Instead, you talk to Claude normally
 and either:
 
-1. **Ask Claude to delegate** — tell it which agent to use in plain English
-2. **Let Claude decide** — describe what you want and Claude picks the right
+1. **Use a slash command** — the fastest way to invoke the pipeline
+2. **Ask Claude to delegate** — tell it which agent to use in plain English
+3. **Let Claude decide** — describe what you want and Claude picks the right
    subagent automatically based on the task
 
 The agents run as subprocesses with their own context window and tool
@@ -24,38 +25,56 @@ restrictions, then hand results back to your main conversation.
 
 ## The Four Agents
 
-| Agent | Role | Equivalent Copilot Agent |
+| Agent | Role | Slash Command |
 |---|---|---|
-| `architect` | Explores solutions, creates implementation plans. No code. | `@architect` |
-| `coder` | Implements the plan, writes unit tests, verifies they pass. | `@coder` |
-| `code-reviewer` | Reviews code for bugs, security, best practices. No fixes. | `@code-reviewer` |
-| `qa` | Writes integration tests, runs full suite, validates requirements. | `@qa` |
+| `architect` | Explores solutions, creates implementation plans. No code. | `/architect` |
+| `coder` | Implements the plan, writes unit tests, verifies they pass. | `/implement` |
+| `code-reviewer` | Reviews code for bugs, security, best practices. No fixes. | `/review` |
+| `qa` | Writes integration tests, runs full suite, validates requirements. | `/qa` |
+
+**Bonus:** `/status` — check pipeline progress at any time.
 
 ---
 
-## How to Invoke Agents
+## Slash Commands (Recommended)
 
-### Option 1 — Explicit delegation (recommended when starting out)
+The fastest way to use the pipeline. Each command invokes the right agent
+with the correct context, artifact paths, and template references built in.
 
-Tell Claude directly which agent to use:
+```
+/architect Add user authentication with OAuth2
+```
+
+```
+/implement
+```
+
+```
+/review
+```
+
+```
+/qa
+```
+
+```
+/status
+```
+
+Commands accept optional arguments for extra context:
+```
+/implement Focus on error handling for the OAuth callback
+```
+
+### Alternative — Explicit delegation
+
+You can still invoke agents manually:
 
 ```
 Use the architect subagent to explore solutions for adding user authentication.
 ```
 
-```
-Use the coder subagent to implement the plan at .agentwork/architect/.
-```
-
-```
-Use the code-reviewer subagent to review the implementation.
-```
-
-```
-Use the qa subagent to verify the implementation and run integration tests.
-```
-
-### Option 2 — Natural language (Claude auto-delegates)
+### Alternative — Natural language
 
 Just describe what you want. Claude reads the agent descriptions and picks
 the right one automatically:
@@ -63,17 +82,6 @@ the right one automatically:
 ```
 Explore 2-3 approaches for adding a caching layer to the API.
 ```
-→ Claude delegates to `architect`
-
-```
-Implement the approved plan from the architect.
-```
-→ Claude delegates to `coder`
-
-```
-Review the code the coder just wrote.
-```
-→ Claude delegates to `code-reviewer`
 
 ---
 
@@ -81,10 +89,8 @@ Review the code the coder just wrote.
 
 ### Step 1 — Design (Architect)
 
-Start a new task by invoking the architect:
-
 ```
-Use the architect subagent to explore solutions for [your feature].
+/architect [describe your feature]
 ```
 
 The architect will:
@@ -99,7 +105,7 @@ select one, it finalizes the implementation plan and sets `status: ready`.
 ### Step 2 — Implement (Coder)
 
 ```
-Use the coder subagent to implement the plan at .agentwork/architect/.
+/implement
 ```
 
 The coder will:
@@ -108,15 +114,15 @@ The coder will:
 - Write unit tests and verify they all pass
 - Save a summary to `.agentwork/coder/`
 
-When done, it presents three options — pick one:
-- Proceed to code review (recommended)
-- Skip to QA
+When done, it presents options — pick one:
+- Proceed to code review (`/review`)
+- Skip to QA (`/qa`)
 - Escalate back to architect (if blocked)
 
 ### Step 3 — Review (Code Reviewer)
 
 ```
-Use the code-reviewer subagent to review the implementation.
+/review
 ```
 
 The reviewer will:
@@ -125,13 +131,13 @@ The reviewer will:
 - Save a report to `.agentwork/code-review/` with a verdict
 
 **You must review the findings.** Then either:
-- Route fixes back to the coder
-- Proceed to QA
+- Route fixes back to the coder (`/implement`)
+- Proceed to QA (`/qa`)
 
 ### Step 4 — QA
 
 ```
-Use the qa subagent to verify the implementation.
+/qa
 ```
 
 QA will:
@@ -141,32 +147,6 @@ QA will:
 - Save a report to `.agentwork/qa/`
 
 **You decide the outcome** — accept, request fixes, or re-run after fixes.
-
----
-
-## Routing Between Agents
-
-Each agent ends with a "Next Steps" block containing the exact prompt to
-give the next agent. Copy it and run it. For example, after the architect
-finishes you will see something like:
-
-```
-Implementation Ready
-
-The plan is saved at .agentwork/architect/ with status: ready.
-
-To implement, invoke the coder subagent:
-
-> Implement the plan at .agentwork/architect/. Read the IMPLEMENTATION_PLAN
-> section for the approved approach. Write unit tests, verify all pass.
-> Save summary to .agentwork/coder/.
-```
-
-Paste that quoted prompt into the chat:
-
-```
-Use the coder subagent. Implement the plan at .agentwork/architect/...
-```
 
 ---
 
@@ -185,7 +165,53 @@ All agent outputs are saved under `.agentwork/` (gitignored):
 
 Agents read each other's artifacts instead of relying on chat history. This
 means you can close Claude Code, come back later, and resume by telling the
-next agent where the artifacts are.
+next agent where the artifacts are — or just run `/status` to see where you
+left off.
+
+---
+
+## Templates
+
+Report templates live in `.claude/templates/`. Agents reference these when
+creating their artifact documents:
+
+```
+.claude/templates/
+├── SOLUTIONS_TEMPLATE.md
+├── IMPLEMENTATION_PLAN_TEMPLATE.md
+├── IMPLEMENTATION_SUMMARY_TEMPLATE.md
+├── CODE_REVIEW_TEMPLATE.md
+├── QA_REPORT_TEMPLATE.md
+└── MANUAL_QA_TEMPLATE.md
+```
+
+---
+
+## Directory Structure
+
+```
+.claude/
+├── agents/                  # Agent definitions
+│   ├── architect.md
+│   ├── coder.md
+│   ├── code-reviewer.md
+│   ├── qa.md
+│   └── shared-conventions.md
+├── commands/                # Slash commands (skills)
+│   ├── architect.md         # /architect
+│   ├── implement.md         # /implement
+│   ├── review.md            # /review
+│   ├── qa.md                # /qa
+│   └── status.md            # /status
+├── templates/               # Report templates
+│   ├── SOLUTIONS_TEMPLATE.md
+│   ├── IMPLEMENTATION_PLAN_TEMPLATE.md
+│   ├── IMPLEMENTATION_SUMMARY_TEMPLATE.md
+│   ├── CODE_REVIEW_TEMPLATE.md
+│   ├── QA_REPORT_TEMPLATE.md
+│   └── MANUAL_QA_TEMPLATE.md
+└── README.md                # This file
+```
 
 ---
 
@@ -202,9 +228,9 @@ This opens an interactive panel where you can:
 - Create new agents with Claude's help
 - Edit existing agent definitions
 
-Project-level agents (this directory: `.claude/agents/`) are committed to
-version control and shared with your team. User-level agents live at
-`~/.claude/agents/` and are personal.
+Project-level agents (`.claude/agents/`) are committed to version control and
+shared with your team. User-level agents live at `~/.claude/agents/` and are
+personal.
 
 ---
 
@@ -222,9 +248,12 @@ and after QA. Agents never auto-proceed.
 without resolving, the agent stops and escalates to you. This prevents
 infinite loops.
 
-**Skip stages when appropriate.** For small changes, go straight to coder
-or skip code review and go directly to QA. The agents are independent — you
-control the routing.
+**Skip stages when appropriate.** For small changes, go straight to
+`/implement` or skip code review and go directly to `/qa`. The agents are
+independent — you control the routing.
 
 **Copilot agents still work.** The `.github/agents/` workflow is untouched.
 Both systems coexist and use the same `.agentwork/` artifact directory.
+
+**Self-contained.** The `.claude/` folder is fully self-contained — copy it
+into any project to get the full pipeline. No dependency on `.github/`.
