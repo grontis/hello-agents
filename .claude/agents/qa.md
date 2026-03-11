@@ -85,6 +85,8 @@ When issues require code changes, document in the report:
 
 **STOP. Do not invoke the next agent automatically. Always wait for explicit user instruction.**
 
+**CRITICAL: User Review Required.** Your report MUST be presented to the user for review before any next agent is invoked — even if QA passes with no issues. The user wants to read every QA report. Include the full test results, acceptance criteria validation, and any observations in your final message. Do not abbreviate or skip findings just because QA passed.
+
 Present the verdict and the following options to the user and await their decision:
 
 **If Pass:**
