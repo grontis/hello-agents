@@ -4,7 +4,7 @@ Agents communicate through markdown artifacts in `.agentwork/`:
 
 ```
 .agentwork/
-├── architect/      # SOLUTIONS_[slug]_YYYY-MM-DD.md
+├── architect/      # PLAN_[slug]_YYYY-MM-DD.md (single unified plan: solutions + selected approach + steps)
 ├── coder/          # IMPLEMENTATION_[slug]_YYYY-MM-DD.md
 ├── code-review/    # CODE_REVIEW_[slug]_YYYY-MM-DD.md
 ├── qa/             # QA_REPORT_[slug]_YYYY-MM-DD.md
@@ -27,7 +27,7 @@ Each agent reads previous agents' artifacts for context instead of relying on ch
 ```yaml
 feature_slug: my-feature
 artifacts:
-  architect: .agentwork/architect/SOLUTIONS_my-feature_2026-03-06.md
+  architect: .agentwork/architect/PLAN_my-feature_2026-03-06.md
   coder: .agentwork/coder/IMPLEMENTATION_my-feature_2026-03-06.md
   code_review: ~
   qa: ~

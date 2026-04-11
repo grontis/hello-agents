@@ -6,7 +6,7 @@ valid-statuses: [draft, in-progress, implemented, changes-in-progress, blocked]
 # Implementation Summary: [Feature Name]
 
 **Date:** YYYY-MM-DD
-**Architect Plan:** .agentwork/architect/SOLUTIONS_[slug]_YYYY-MM-DD.md
+**Architect Plan:** .agentwork/architect/PLAN_[slug]_YYYY-MM-DD.md
 
 ---
 

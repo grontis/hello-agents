@@ -10,7 +10,7 @@ valid-statuses: [draft, in-progress, pass, fail, pass-with-notes]
 **QA Engineer:** QA Agent
 **Implementation:** .agentwork/coder/IMPLEMENTATION_[slug]_YYYY-MM-DD.md
 **Code Review:** .agentwork/code-review/CODE_REVIEW_[slug]_YYYY-MM-DD.md
-**Architect Plan:** .agentwork/architect/SOLUTIONS_[slug]_YYYY-MM-DD.md
+**Architect Plan:** .agentwork/architect/PLAN_[slug]_YYYY-MM-DD.md
 
 ---
 

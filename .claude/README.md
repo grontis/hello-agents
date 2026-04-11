@@ -25,12 +25,13 @@ restrictions, then hand results back to your main conversation.
 
 ## The Four Agents
 
-| Agent | Role | Slash Command |
-|---|---|---|
-| `architect` | Explores solutions, creates implementation plans. No code. | `/architect` |
-| `coder` | Implements the plan, writes unit tests, verifies they pass. | `/implement` |
-| `code-reviewer` | Reviews code for bugs, security, best practices. No fixes. | `/review` |
-| `qa` | Writes integration tests, runs full suite, validates requirements. | `/qa` |
+| Agent | Role | Model | Slash Command |
+|---|---|---|---|
+| `architect` | Explores solutions, creates a single plan document. No code. | sonnet | `/architect` |
+| `architect-deep` | Opus-backed variant for complex/cross-cutting design. Same workflow. | opus | `/architect --deep` |
+| `coder` | Implements the plan, writes unit tests, verifies they pass. | sonnet | `/implement` |
+| `code-reviewer` | Reviews code for bugs, security, best practices. No fixes. | haiku | `/code-review` |
+| `qa` | Writes integration tests, runs full suite, validates requirements. | sonnet | `/qa` |
 
 **Bonus:** `/status` — check pipeline progress at any time.
 
@@ -50,7 +51,7 @@ with the correct context, artifact paths, and template references built in.
 ```
 
 ```
-/review
+/code-review
 ```
 
 ```
@@ -94,13 +95,20 @@ Explore 2-3 approaches for adding a caching layer to the API.
 ```
 
 The architect will:
-- Search your codebase for existing patterns
-- Research relevant libraries/APIs
-- Propose 2-3 approaches with trade-offs
-- Save a solutions document to `.agentwork/architect/`
+- Classify the request by complexity (`trivial` / `small` / `medium` / `large`)
+- Scope research to that complexity — no over-exploration for simple changes
+- Trivial: redirect you straight to `/implement` (no plan written)
+- Small: one proposal, plan goes straight to `status: ready`
+- Medium/Large: propose 2-3 approaches with trade-offs, await your selection
+- Save a single `PLAN_[slug]_YYYY-MM-DD.md` to `.agentwork/architect/`
 
-**You must choose a solution.** The architect will prompt you. After you
-select one, it finalizes the implementation plan and sets `status: ready`.
+For medium/large work, **you must choose a solution.** The architect will
+prompt you. After you select one, it fills in the Selected Approach section
+of the same plan document and sets `status: ready`.
+
+**For complex or cross-cutting design work**, use `/architect --deep` —
+this routes to the Opus-backed `architect-deep` variant. Everything else
+about the workflow is identical.
 
 ### Step 2 — Implement (Coder)
 
@@ -115,14 +123,14 @@ The coder will:
 - Save a summary to `.agentwork/coder/`
 
 When done, it presents options — pick one:
-- Proceed to code review (`/review`)
+- Proceed to code review (`/code-review`)
 - Skip to QA (`/qa`)
 - Escalate back to architect (if blocked)
 
 ### Step 3 — Review (Code Reviewer)
 
 ```
-/review
+/code-review
 ```
 
 The reviewer will:
@@ -156,7 +164,7 @@ All agent outputs are saved under `.agentwork/` (gitignored):
 
 ```
 .agentwork/
-├── architect/      # SOLUTIONS_[feature]_YYYY-MM-DD.md
+├── architect/      # PLAN_[feature]_YYYY-MM-DD.md (single doc: proposals + selected approach + steps)
 ├── coder/          # IMPLEMENTATION_[feature]_YYYY-MM-DD.md
 ├── code-review/    # CODE_REVIEW_[feature]_YYYY-MM-DD.md
 ├── qa/             # QA_REPORT_[feature]_YYYY-MM-DD.md
@@ -177,8 +185,7 @@ creating their artifact documents:
 
 ```
 .claude/templates/
-├── SOLUTIONS_TEMPLATE.md
-├── IMPLEMENTATION_PLAN_TEMPLATE.md
+├── ARCHITECT_PLAN_TEMPLATE.md    # unified: proposals + selected approach + steps
 ├── IMPLEMENTATION_SUMMARY_TEMPLATE.md
 ├── CODE_REVIEW_TEMPLATE.md
 ├── QA_REPORT_TEMPLATE.md
@@ -192,20 +199,20 @@ creating their artifact documents:
 ```
 .claude/
 ├── agents/                  # Agent definitions
-│   ├── architect.md
+│   ├── architect.md         # sonnet (default)
+│   ├── architect-deep.md    # opus (opt-in via /architect --deep)
 │   ├── coder.md
 │   ├── code-reviewer.md
 │   ├── qa.md
 │   └── shared-conventions.md
 ├── commands/                # Slash commands (skills)
-│   ├── architect.md         # /architect
+│   ├── architect.md         # /architect [--deep]
 │   ├── implement.md         # /implement
-│   ├── review.md            # /review
+│   ├── code-review.md       # /code-review
 │   ├── qa.md                # /qa
 │   └── status.md            # /status
 ├── templates/               # Report templates
-│   ├── SOLUTIONS_TEMPLATE.md
-│   ├── IMPLEMENTATION_PLAN_TEMPLATE.md
+│   ├── ARCHITECT_PLAN_TEMPLATE.md
 │   ├── IMPLEMENTATION_SUMMARY_TEMPLATE.md
 │   ├── CODE_REVIEW_TEMPLATE.md
 │   ├── QA_REPORT_TEMPLATE.md

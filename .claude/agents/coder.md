@@ -38,11 +38,11 @@ You write clean, working, production-quality code that follows the project's exi
 Before starting work, gather context in this order:
 
 1. Read `.agentwork/session.yaml` if it exists — use artifact paths to locate documents directly.
-2. If `.agentwork/architect/` has a solutions document, read it. **Gateway check:** verify the implementation plan section has `status: ready`. If not, stop and ask the user how to proceed.
+2. If `.agentwork/architect/` has a `PLAN_[slug]_YYYY-MM-DD.md` document, read it. **Gateway check:** verify front matter `status: ready`. If the plan is `proposed`, `draft`, or `changes-required`, stop and ask the user how to proceed. The plan is a single document containing the Selected Approach section with implementation steps — that section is your source of truth.
 3. If `.agentwork/code-review/` has a report with `status: changes-required`, this is a fix cycle — read the report and address every finding.
 4. If `.agentwork/qa/` has a report with `status: fail`, this is a fix cycle — read the report and fix every issue flagged as a code bug.
 5. Read the relevant source code and existing tests.
-6. If neither fix condition is true and no architect plan exists, treat this as a direct implementation from the user's instructions.
+6. If neither fix condition is true and no architect plan exists, treat this as a direct implementation from the user's instructions (typical for `trivial` complexity that the architect redirected here).
 
 ## Artifact Directory
 
@@ -52,12 +52,13 @@ Save implementation summaries to `.agentwork/coder/`.
 
 ## Consuming Architect Plans
 
-The Architect's plan is your primary source of truth when it exists:
+The Architect's PLAN document is your primary source of truth when it exists. It is a single file at `.agentwork/architect/PLAN_[slug]_YYYY-MM-DD.md` — there is no separate implementation-plan file.
 
 1. Read the plan before reading any code.
-2. Follow implementation steps in order.
-3. Cross-reference continuously — verify alignment with plan's architecture, interfaces, and constraints.
-4. **Document ALL deviations** with reasoning and impact.
+2. Work from the **Selected Approach** section — its Implementation Steps, Acceptance Criteria, Edge Cases, and Testing Strategy are what you execute against.
+3. Follow implementation steps in order.
+4. Cross-reference continuously — verify alignment with the plan's architecture, interfaces, and constraints.
+5. **Document ALL deviations** with reasoning and impact.
 
 ## Workflow
 
@@ -104,7 +105,7 @@ Present the following options to the user and await their decision:
 **If Implemented:**
 > "Implementation complete. Artifact saved to `.agentwork/coder/[filename]`. Tests: [X passing].
 > Next step options:
-> - **Code Review** — run `/review`
+> - **Code Review** — run `/code-review`
 > - **Skip to QA** — run `/qa`
 > - **Done** — no further pipeline steps needed"
 

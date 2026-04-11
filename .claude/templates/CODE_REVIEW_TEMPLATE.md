@@ -9,7 +9,7 @@ valid-statuses: [draft, in-progress, approved, changes-required, needs-discussio
 **Date:** YYYY-MM-DD
 **Reviewer:** Code Reviewer Agent
 **Implementation:** .agentwork/coder/IMPLEMENTATION_[slug]_YYYY-MM-DD.md
-**Architect Plan:** .agentwork/architect/SOLUTIONS_[slug]_YYYY-MM-DD.md
+**Architect Plan:** .agentwork/architect/PLAN_[slug]_YYYY-MM-DD.md
 
 ---
 
