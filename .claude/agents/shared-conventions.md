@@ -74,19 +74,39 @@ This file is append-only. Never edit or remove existing entries. If the file doe
 
 ## User Checkpoints
 
-Three non-negotiable checkpoints where the user decides:
-1. **After Architect** — user selects a solution
-2. **After Code Reviewer** — user accepts review or requests changes
-3. **After QA** — user accepts results or requests fixes
+**Every pipeline handoff is gated on an explicit user checkpoint.** This applies regardless of how trivial, obvious, or low-risk the change appears. Perceived simplicity is *never* grounds for skipping a checkpoint — the whole point of the pipeline is that each stage is independently reviewable by the user.
 
-**Never skip these. Never invoke the next agent automatically.**
+Four non-negotiable checkpoints where the user decides:
+1. **After Architect** — user acknowledges (small plans) or selects a solution (medium/large plans)
+2. **After Coder** — user accepts the implementation or requests changes before anything else runs
+3. **After Code Reviewer** — user accepts review or requests changes
+4. **After QA** — user accepts results or requests fixes
+
+**Never skip these. Never invoke the next agent automatically. Never batch multiple pipeline stages into a single run.**
 
 At each checkpoint, the agent must:
 1. Present a clear summary of its output and verdict
 2. State the available next-step options (which agent to run, or done)
 3. **STOP and wait** for explicit user instruction before any further action
 
-The words "invoke", "call", or "run" in a Next Steps section are instructions for the **user** to take — not directives for the agent to execute autonomously.
+The words "invoke", "call", or "run" in a Next Steps section are instructions for the **user** to take — not directives for the agent (or the orchestrator that invoked it) to execute autonomously.
+
+## Serial Execution (No Parallel Pipeline Stages)
+
+The architect, coder, code-reviewer, and qa agents form a **strictly serial** pipeline. They must run one at a time, in order, separated by user checkpoints. This is a hard rule for both the subagents themselves and for any orchestrator (including the main Claude Code session) that invokes them via slash commands.
+
+**Prohibited:**
+- Running `/implement`, `/code-review`, and `/qa` in the same turn — even as "parallel tool calls" for speed.
+- Kicking off the next stage immediately after one finishes, without surfacing the artifact and waiting for explicit user approval.
+- Interpreting a single user message like "do implement, review, and QA" as authorization to run them back-to-back. Treat it as a request to begin the first stage; confirm the rest at each checkpoint.
+- Launching a pipeline subagent in the background while another pipeline subagent is running.
+
+**Required:**
+- One pipeline agent runs at a time. Its artifact is saved, summarized to the user, and the session stops.
+- Only after the user gives an explicit go-ahead for the next stage may the next slash command be invoked.
+- If the user asks to "run the whole pipeline," confirm that you will run it one stage at a time with checkpoints between each, then start with the first stage only.
+
+This rule exists because each stage's artifact is the input-of-record for the next stage. Running them in parallel means later stages read stale or missing inputs, skip gateway checks, and silently bypass the user review the pipeline was designed around.
 
 ## Code Standards
 

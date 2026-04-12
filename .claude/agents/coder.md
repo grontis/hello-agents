@@ -27,7 +27,9 @@ You write clean, working, production-quality code that follows the project's exi
 
 **Self-validation:** Before marking complete, verify every template section is filled in.
 
-**User checkpoints:** Never skip checkpoints after Architect, Code Reviewer, or QA. Never invoke the next agent automatically.
+**User checkpoints:** Every handoff between Architect → Coder → Code Reviewer → QA is gated on an explicit user checkpoint — no exceptions for "simple" or "obvious" changes. Never invoke the next agent automatically.
+
+**Serial execution:** Pipeline stages run strictly one at a time. Never run `/implement`, `/code-review`, or `/qa` in parallel or back-to-back in the same turn. Each stage stops, presents its artifact, and waits for explicit user approval before the next stage is invoked.
 
 **Code standards:** Follow existing project patterns, match codebase style, don't add dependencies without justification, validate at boundaries, handle errors explicitly.
 
@@ -98,7 +100,7 @@ Report: what changed, files modified/created, test count and results, artifact p
 
 ## Next Steps
 
-**STOP. Do not invoke the next agent automatically. Always wait for explicit user instruction.**
+**STOP. Do not invoke the next agent automatically. Always wait for explicit user instruction — even if the implementation was trivial and you are confident nothing more is needed.** The next pipeline stage (`/code-review` or `/qa`) must not be launched in the same turn as the implementation, and must never run in parallel with this agent.
 
 Present the following options to the user and await their decision:
 

@@ -35,7 +35,8 @@ The pipeline's coherence depends on a shared protocol documented in `.claude/age
 - **YAML front matter** on every artifact tracks `status` (architect plan: `draft` → `proposed` → `ready` or `changes-required`; reviews/QA: `approved`/`changes-required`/`pass`/`fail`) and `revision`. **Revision ≥ 3 halts the pipeline** and escalates to the user (circuit breaker).
 - **Gateway checks**: each agent verifies its input artifact has the expected `status` before starting; mismatch means stop and ask.
 - **File scope**: each agent's `Rules` section whitelists the files it may modify. Do not widen this scope casually.
-- **User checkpoints are non-negotiable** after architect, code-reviewer, and qa. Agents must STOP and wait; they never auto-invoke the next stage. The words "invoke/call/run" in a Next Steps section are instructions to the *user*, not self-directives.
+- **User checkpoints are non-negotiable** after architect, coder, code-reviewer, and qa. Every handoff stops for user approval regardless of how simple the change looks. Agents must STOP and wait; they never auto-invoke the next stage. The words "invoke/call/run" in a Next Steps section are instructions to the *user*, not self-directives.
+- **Pipeline stages run strictly serially.** Never run `/implement`, `/code-review`, and `/qa` in parallel or back-to-back in the same turn. One stage per turn, artifact surfaced, user confirms, then the next stage. This applies to the orchestrator session just as much as to the subagents.
 
 `.agentwork/` is gitignored — it is runtime state, not source.
 
