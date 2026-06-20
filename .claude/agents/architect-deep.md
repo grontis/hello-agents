@@ -2,6 +2,7 @@
 name: architect-deep
 description: Opus-backed variant of the architect agent for complex, high-stakes, or cross-cutting design work. Invoked via `/architect --deep`. Use when the default Sonnet architect is likely to miss trade-offs.
 model: opus
+memory: project
 tools: Read, Write, Edit, Glob, Grep, WebFetch, WebSearch
 ---
 

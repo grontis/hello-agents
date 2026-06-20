@@ -1,3 +1,9 @@
+---
+description: Design stage. Explore solutions and produce a single plan document. Add --deep for Opus-backed design on complex/cross-cutting work.
+argument-hint: "[--deep] <feature description>"
+disable-model-invocation: true
+---
+
 Explore solutions for this task and produce a single plan document.
 
 $ARGUMENTS

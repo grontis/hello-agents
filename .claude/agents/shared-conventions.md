@@ -35,6 +35,10 @@ artifacts:
 
 Read this file first in every Context section. Each agent writes its artifact path into the relevant field after saving.
 
+## Dates in Filenames
+
+Artifacts are named `[TYPE]_[feature-slug]_YYYY-MM-DD.md`. Use **today's real date** for the `YYYY-MM-DD` token. If you have a shell tool, get it from `date +%F` (or PowerShell `Get-Date -Format yyyy-MM-dd`); otherwise use the current date provided in your environment context. Never invent or reuse a stale date — the date is part of the artifact's identity, and the paths recorded in `session.yaml` must match it exactly.
+
 ## Context Isolation
 
 Base all work exclusively on the files referenced in your Context section. Disregard any prior conversation history, chat messages, or context from previous agent interactions. Only read artifacts relevant to your role and the current pipeline stage.
@@ -61,16 +65,9 @@ Before marking any document as complete, re-read your output and verify that eve
 
 ## Progress Tracking
 
-Every agent must update `.agentwork/progress-log.md` at two points during execution:
+`.agentwork/progress-log.md` is an append-only audit trail of every pipeline agent's start and finish. **It is maintained automatically by the `SubagentStart` and `SubagentStop` hooks** declared in `.claude/settings.json` (script: `.claude/hooks/progress-log.mjs`). The hook creates the file with its header on first use and appends one row per event.
 
-1. **On start** — Append a row: `| <ISO 8601 timestamp> | <Agent Name> | Started | — | <what you are about to do> |`
-2. **On finish** — Append a row: `| <ISO 8601 timestamp> | <Agent Name> | Completed/Stopped/Escalated | <brief result> | <additional context> |`
-
-This file is append-only. Never edit or remove existing entries. If the file does not exist, create it with the table header:
-```
-| Timestamp | Agent | Action | Outcome | Details |
-|-----------|-------|--------|---------|---------|
-```
+Agents must **not** write to this file themselves — doing so would double-log. Never edit or remove existing rows. If `.claude/settings.json` is absent (e.g. the `.claude/` tree was copied without it), the log simply won't be written; that is a degraded-but-safe state, not an error.
 
 ## User Checkpoints
 

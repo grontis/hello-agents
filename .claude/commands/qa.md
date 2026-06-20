@@ -1,3 +1,9 @@
+---
+description: Verify stage. Run integration tests and validate against the plan's acceptance criteria. The final quality gate.
+argument-hint: "[extra context for QA]"
+disable-model-invocation: true
+---
+
 Use the qa subagent to verify the implementation.
 
 **Handoff rule (read before invoking):** This is one serial stage of a four-stage pipeline (architect → coder → code-reviewer → qa). Run only the qa subagent this turn. When it finishes, present its report and verdict and **STOP** — do not invoke `/implement` or `/code-review` in the same turn, even if QA passes, and never launch them in parallel with this stage. Wait for explicit user approval before any follow-up stage.

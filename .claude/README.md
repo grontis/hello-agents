@@ -1,25 +1,24 @@
 # Claude Code Agents — Getting Started
 
-This directory contains custom subagents for Claude Code that replicate the
-4-agent development pipeline from `.github/agents/` (GitHub Copilot).
+This directory contains custom subagents for Claude Code that implement a
+4-agent development pipeline (design → build → review → verify), coordinated
+entirely through file-based artifacts.
 
 ---
 
-## GitHub Copilot vs Claude Code — Key Difference
+## How to invoke the pipeline
 
-In **GitHub Copilot**, you select an agent explicitly from a dropdown in the
-chat panel, and it takes over that conversation turn.
+You talk to Claude normally and drive each stage explicitly:
 
-In **Claude Code**, there is no dropdown. Instead, you talk to Claude normally
-and either:
-
-1. **Use a slash command** — the fastest way to invoke the pipeline
+1. **Use a slash command** — the fastest way to invoke a stage (`/architect`,
+   `/implement`, `/code-review`, `/qa`, `/status`)
 2. **Ask Claude to delegate** — tell it which agent to use in plain English
-3. **Let Claude decide** — describe what you want and Claude picks the right
-   subagent automatically based on the task
 
-The agents run as subprocesses with their own context window and tool
-restrictions, then hand results back to your main conversation.
+The pipeline commands are **user-invoked only** (`disable-model-invocation: true`),
+so Claude won't silently auto-run a stage for you — that's part of what keeps
+the pipeline strictly serial and user-gated. The agents run as subprocesses with
+their own context window and tool restrictions, then hand results back through
+artifact files.
 
 ---
 
@@ -30,7 +29,7 @@ restrictions, then hand results back to your main conversation.
 | `architect` | Explores solutions, creates a single plan document. No code. | sonnet | `/architect` |
 | `architect-deep` | Opus-backed variant for complex/cross-cutting design. Same workflow. | opus | `/architect --deep` |
 | `coder` | Implements the plan, writes unit tests, verifies they pass. | sonnet | `/implement` |
-| `code-reviewer` | Reviews code for bugs, security, best practices. No fixes. | haiku | `/code-review` |
+| `code-reviewer` | Reviews code for bugs, security, best practices. No fixes. | sonnet | `/code-review` |
 | `qa` | Writes integration tests, runs full suite, validates requirements. | sonnet | `/qa` |
 
 **Bonus:** `/status` — check pipeline progress at any time.
@@ -202,21 +201,25 @@ creating their artifact documents:
 │   ├── architect.md         # sonnet (default)
 │   ├── architect-deep.md    # opus (opt-in via /architect --deep)
 │   ├── coder.md
-│   ├── code-reviewer.md
+│   ├── code-reviewer.md     # sonnet
 │   ├── qa.md
-│   └── shared-conventions.md
-├── commands/                # Slash commands (skills)
+│   └── shared-conventions.md  # read at runtime by every agent (single source of rules)
+├── commands/                # Slash commands (user-invoked)
 │   ├── architect.md         # /architect [--deep]
 │   ├── implement.md         # /implement
 │   ├── code-review.md       # /code-review
 │   ├── qa.md                # /qa
-│   └── status.md            # /status
+│   └── status.md            # /status  (injects live session/log state)
 ├── templates/               # Report templates
 │   ├── ARCHITECT_PLAN_TEMPLATE.md
 │   ├── IMPLEMENTATION_SUMMARY_TEMPLATE.md
 │   ├── CODE_REVIEW_TEMPLATE.md
 │   ├── QA_REPORT_TEMPLATE.md
 │   └── MANUAL_QA_TEMPLATE.md
+├── hooks/                   # Node hook scripts (cross-platform, fail-open)
+│   ├── progress-log.mjs     # auto-maintains .agentwork/progress-log.md
+│   └── gateway.mjs          # blocks clear stage-skips before a command runs
+├── settings.json            # wires the hooks
 └── README.md                # This file
 ```
 
@@ -247,9 +250,9 @@ personal.
 does not see your previous chat messages — it reads artifact files instead.
 This is intentional and keeps agents focused.
 
-**You are always in control.** The pipeline has three mandatory checkpoints
-where you decide what happens next: after the architect, after code review,
-and after QA. Agents never auto-proceed.
+**You are always in control.** The pipeline has four mandatory checkpoints
+where you decide what happens next: after the architect, after the coder,
+after code review, and after QA. Agents never auto-proceed.
 
 **Circuit breaker.** If code bounces between coder and reviewer 3 times
 without resolving, the agent stops and escalates to you. This prevents
@@ -259,8 +262,20 @@ infinite loops.
 `/implement` or skip code review and go directly to `/qa`. The agents are
 independent — you control the routing.
 
-**Copilot agents still work.** The `.github/agents/` workflow is untouched.
-Both systems coexist and use the same `.agentwork/` artifact directory.
+**Hooks back up the audit trail and gates.** `.claude/settings.json` wires
+`SubagentStart`/`SubagentStop` hooks that auto-write `.agentwork/progress-log.md`,
+plus a `UserPromptExpansion` hook that blocks the clearest stage-skips before a
+command runs. The log records each agent's start and finish; it does not
+distinguish *how* a run ended (a clean finish, a circuit-breaker halt, and a
+`blocked` exit all read as a finish row), so treat it as a timeline, not an
+outcome ledger. All hooks are **fail-open** — without `settings.json` the
+pipeline still works on its prose rules. Scripts are Node (`.mjs`) so they run
+on Windows and Unix alike.
+
+**Agents learn across sessions.** Every pipeline agent sets `memory: project`,
+building durable project knowledge in `.claude/agent-memory/<agent>/MEMORY.md`
+(gitignored). Remove the `memory` frontmatter if you prefer strict per-run
+reproducibility.
 
 **Self-contained.** The `.claude/` folder is fully self-contained — copy it
-into any project to get the full pipeline. No dependency on `.github/`.
+into any project to get the full pipeline.

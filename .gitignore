@@ -1,2 +1,10 @@
 # Agent runtime artifacts (generated per session, not source files)
 .agentwork/
+
+# Per-project subagent memory (learned state, written at runtime — not source).
+# The `memory: project` frontmatter that *enables* it lives in the agent files
+# and is committed; the accumulated MEMORY.md content is runtime state.
+.claude/agent-memory/
+
+# Machine-local settings overrides
+.claude/settings.local.json

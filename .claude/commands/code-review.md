@@ -1,3 +1,9 @@
+---
+description: Review stage. Review the current implementation for bugs, security, and plan adherence. Does not fix code.
+argument-hint: "[extra context for the reviewer]"
+disable-model-invocation: true
+---
+
 Use the code-reviewer subagent to review the current implementation.
 
 **Handoff rule (read before invoking):** This is one serial stage of a four-stage pipeline (architect → coder → code-reviewer → qa). Run only the code-reviewer subagent this turn. When it finishes, present its report and verdict and **STOP** — do not invoke `/implement` or `/qa` in the same turn, even if the review passes cleanly, and never launch them in parallel with this stage. Wait for explicit user approval before moving to any next stage.

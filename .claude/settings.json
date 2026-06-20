@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Write(.agentwork/**)",
+      "Edit(.agentwork/**)",
+      "Write(.claude/agent-memory/**)",
+      "Edit(.claude/agent-memory/**)"
+    ]
+  },
+  "hooks": {
+    "SubagentStart": [
+      {
+        "matcher": "architect|architect-deep|coder|code-reviewer|qa",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/progress-log.mjs\" start" }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "architect|architect-deep|coder|code-reviewer|qa",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/progress-log.mjs\" stop" }
+        ]
+      }
+    ],
+    "UserPromptExpansion": [
+      {
+        "matcher": "implement|code-review|qa",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/gateway.mjs\"" }
+        ]
+      }
+    ]
+  }
+}

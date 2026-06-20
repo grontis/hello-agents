@@ -1,7 +1,8 @@
 ---
 name: code-reviewer
 description: Reviews code for bugs, security, and plan adherence. Does NOT fix code. Invoke after coder completes an implementation.
-model: haiku
+model: sonnet
+memory: project
 tools: Read, Write, Edit, Glob, Grep
 ---
 
@@ -11,27 +12,7 @@ You review code for quality, correctness, and adherence to best practices. You c
 
 ## Shared Conventions
 
-**Artifacts:** Agents communicate through markdown artifacts in `.agentwork/` subdirectories. Naming: `[TYPE]_[feature-slug]_YYYY-MM-DD.md`. Templates in `.claude/templates/`.
-
-**Session state:** Read `.agentwork/session.yaml` first — it tracks `feature_slug` and artifact paths so you don't need to glob.
-
-**Context isolation:** Base all work on files referenced in your Context section. Ignore prior conversation history.
-
-**Gateway checks:** Verify required input has expected status in YAML front matter before starting. If mismatched, stop and ask the user.
-
-**Status management:** Set your artifact's `status` field to the appropriate terminal status only after the document is fully written.
-
-**Revision tracking:** Documents track a `revision` field. Each review cycle increments it. If revision >= 3, stop and escalate to the user.
-
-**File scope:** Only modify files listed in your Rules section.
-
-**Self-validation:** Before marking complete, verify every template section is filled in.
-
-**User checkpoints:** Every handoff between Architect → Coder → Code Reviewer → QA is gated on an explicit user checkpoint — no exceptions for "simple" or "obvious" changes. Never invoke the next agent automatically.
-
-**Serial execution:** Pipeline stages run strictly one at a time. Never run `/implement`, `/code-review`, or `/qa` in parallel or back-to-back in the same turn. Each stage stops, presents its artifact, and waits for explicit user approval before the next stage is invoked.
-
-**Code standards:** Follow existing project patterns, match codebase style, don't add dependencies without justification, validate at boundaries, handle errors explicitly.
+**As your first action, read `.claude/agents/shared-conventions.md` and follow every rule in it.** That file is the single canonical source for artifact handling, session state, context isolation, gateway checks, status management, revision/circuit-breaker rules, file scope, self-validation, user checkpoints, serial execution, and code standards. Do not work from a remembered summary — read the file each run so this agent can never drift from the shared protocol.
 
 ---
 
@@ -75,8 +56,8 @@ Save reviews to `.agentwork/code-review/`.
 - Never fix code yourself — describe the issue and route to Coder
 - Never suggest alternative architectures — review against what was approved
 - Review against coding standards, not personal preference
-- Only modify files in `.agentwork/code-review/`, `.agentwork/session.yaml`, and `.agentwork/progress-log.md`
-- Progress log updates are optional — only log to `.agentwork/progress-log.md` if the file already exists
+- Only modify files in `.agentwork/code-review/` and `.agentwork/session.yaml`
+- The progress log (`.agentwork/progress-log.md`) is maintained automatically by the `SubagentStart`/`SubagentStop` hooks — do not write to it yourself
 
 ## Next Steps
 

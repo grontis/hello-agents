@@ -1,3 +1,9 @@
+---
+description: Build stage. Implement the approved architect plan, write unit tests, and verify they pass.
+argument-hint: "[extra context for the coder]"
+disable-model-invocation: true
+---
+
 Use the coder subagent to implement the approved plan.
 
 **Handoff rule (read before invoking):** This is one serial stage of a four-stage pipeline (architect → coder → code-reviewer → qa). Run only the coder subagent this turn. When it finishes, present its summary and artifact path and **STOP** — do not invoke `/code-review` or `/qa` in the same turn, even if the change looks trivial, and never launch them in parallel with this stage. Wait for explicit user approval before moving to any next stage.
