@@ -11,7 +11,7 @@ entirely through file-based artifacts.
 You talk to Claude normally and drive each stage explicitly:
 
 1. **Use a slash command** — the fastest way to invoke a stage (`/architect`,
-   `/implement`, `/code-review`, `/qa`, `/status`)
+   `/implement`, `/review-code`, `/qa`, `/status`)
 2. **Ask Claude to delegate** — tell it which agent to use in plain English
 
 The pipeline commands are **user-invoked only** (`disable-model-invocation: true`),
@@ -29,7 +29,7 @@ artifact files.
 | `architect` | Explores solutions, creates a single plan document. No code. | sonnet | `/architect` |
 | `architect-deep` | Opus-backed variant for complex/cross-cutting design. Same workflow. | opus | `/architect --deep` |
 | `coder` | Implements the plan, writes unit tests, verifies they pass. | sonnet | `/implement` |
-| `code-reviewer` | Reviews code for bugs, security, best practices. No fixes. | sonnet | `/code-review` |
+| `code-reviewer` | Reviews code for bugs, security, best practices. No fixes. | sonnet | `/review-code` |
 | `qa` | Writes integration tests, runs full suite, validates requirements. | sonnet | `/qa` |
 
 **Bonus:** `/status` — check pipeline progress at any time.
@@ -50,7 +50,7 @@ with the correct context, artifact paths, and template references built in.
 ```
 
 ```
-/code-review
+/review-code
 ```
 
 ```
@@ -122,15 +122,18 @@ The coder will:
 - Save a summary to `.agentwork/coder/`
 
 When done, it presents options — pick one:
-- Proceed to code review (`/code-review`)
+- Proceed to code review (`/review-code`)
 - Skip to QA (`/qa`)
 - Escalate back to architect (if blocked)
 
 ### Step 3 — Review (Code Reviewer)
 
 ```
-/code-review
+/review-code
 ```
+
+(Named `/review-code` rather than `/code-review` so it doesn't shadow Claude
+Code's built-in `/code-review` / `/code-review ultra` commands.)
 
 The reviewer will:
 - Check against the architect's plan and coder's summary
@@ -207,9 +210,9 @@ creating their artifact documents:
 ├── commands/                # Slash commands (user-invoked)
 │   ├── architect.md         # /architect [--deep]
 │   ├── implement.md         # /implement
-│   ├── code-review.md       # /code-review
+│   ├── review-code.md       # /review-code (named to avoid the built-in /code-review)
 │   ├── qa.md                # /qa
-│   └── status.md            # /status  (injects live session/log state)
+│   └── status.md            # /status  (reads live session/log state itself; no shell injection)
 ├── templates/               # Report templates
 │   ├── ARCHITECT_PLAN_TEMPLATE.md
 │   ├── IMPLEMENTATION_SUMMARY_TEMPLATE.md
@@ -279,3 +282,9 @@ reproducibility.
 
 **Self-contained.** The `.claude/` folder is fully self-contained — copy it
 into any project to get the full pipeline.
+
+**Skills are a separate library.** The repo-root `skills/` directory holds
+optional skills (e.g. `game-engine-architect`) that are *not* part of the
+pipeline and are *not* auto-discovered — Claude Code only loads skills from
+`.claude/skills/<name>/` (project) or `~/.claude/skills/<name>/` (personal).
+To adopt one, copy its folder into your project's `.claude/skills/`.

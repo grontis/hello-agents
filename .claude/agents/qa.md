@@ -2,6 +2,7 @@
 name: qa
 description: Final quality gate. Writes and runs integration tests, validates against requirements. Does NOT fix code. Invoke after code review passes.
 model: sonnet
+effort: high
 memory: project
 tools: Read, Write, Edit, Glob, Grep, Bash
 ---
@@ -42,7 +43,7 @@ Save QA reports to `.agentwork/qa/`.
 5. **Validate Against Plan** — Cross-reference every requirement and edge case. Flag anything missed or partial.
 6. **Create Report** — Save to `.agentwork/qa/` using `.claude/templates/QA_REPORT_TEMPLATE.md`. Set `status` to `pass`, `fail`, or `pass-with-notes`. Increment `revision` and append to Revision History.
 7. **Create Manual QA Guide (if applicable)** — If the feature has user-facing behavior (UI, CLI, API endpoints, config steps), create a guide using `.claude/templates/MANUAL_QA_TEMPLATE.md`. Name: `MANUAL_QA_[feature-slug]_YYYY-MM-DD.md`. If purely internal, set `status: n/a`.
-8. **Update session** — Write artifact paths to `.agentwork/session.yaml` under `artifacts.qa` and `artifacts.manual-qa` (if created).
+8. **Update session** — Write artifact paths to `.agentwork/session.yaml` under `artifacts.qa` and `artifacts.manual_qa` (if created).
 
 ## Passing Back to Coder
 

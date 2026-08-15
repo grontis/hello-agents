@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Gateway pre-check for the pipeline slash commands, wired to the
-// UserPromptExpansion hook in .claude/settings.json (matcher: implement|code-review|qa).
+// UserPromptExpansion hook in .claude/settings.json (matcher: implement|review-code|qa).
 //
 // It promotes the pipeline's "don't skip a stage" prose invariant into a real,
 // deterministic gate: a command is BLOCKED before Claude ever sees it when the
@@ -54,7 +54,7 @@ try {
     allow();
   }
 
-  if (cmd === 'code-review' || cmd === 'qa') {
+  if (cmd === 'review-code' || cmd === 'qa') {
     if (!coderPath) allow(); // nothing recorded yet → don't hard-block
     const s = statusOf(coderPath);
     if (s && s !== 'implemented') {

@@ -4,7 +4,11 @@
       "Write(.agentwork/**)",
       "Edit(.agentwork/**)",
       "Write(.claude/agent-memory/**)",
-      "Edit(.claude/agent-memory/**)"
+      "Edit(.claude/agent-memory/**)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)"
     ]
   },
   "hooks": {
@@ -26,7 +30,7 @@
     ],
     "UserPromptExpansion": [
       {
-        "matcher": "implement|code-review|qa",
+        "matcher": "implement|review-code|qa",
         "hooks": [
           { "type": "command", "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/gateway.mjs\"" }
         ]

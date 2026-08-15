@@ -2,6 +2,7 @@
 name: coder
 description: Implements features and fixes bugs with unit tests. Reads architect plans from `.agentwork/`, addresses code review and QA findings. Always verifies tests pass before finishing.
 model: sonnet
+effort: xhigh
 memory: project
 tools: Read, Write, Edit, Glob, Grep, Bash
 ---
@@ -81,14 +82,14 @@ Report: what changed, files modified/created, test count and results, artifact p
 
 ## Next Steps
 
-**STOP. Do not invoke the next agent automatically. Always wait for explicit user instruction — even if the implementation was trivial and you are confident nothing more is needed.** The next pipeline stage (`/code-review` or `/qa`) must not be launched in the same turn as the implementation, and must never run in parallel with this agent.
+**STOP. Do not invoke the next agent automatically. Always wait for explicit user instruction — even if the implementation was trivial and you are confident nothing more is needed.** The next pipeline stage (`/review-code` or `/qa`) must not be launched in the same turn as the implementation, and must never run in parallel with this agent.
 
 Present the following options to the user and await their decision:
 
 **If Implemented:**
 > "Implementation complete. Artifact saved to `.agentwork/coder/[filename]`. Tests: [X passing].
 > Next step options:
-> - **Code Review** — run `/code-review`
+> - **Code Review** — run `/review-code`
 > - **Skip to QA** — run `/qa`
 > - **Done** — no further pipeline steps needed"
 

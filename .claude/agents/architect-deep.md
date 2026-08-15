@@ -2,6 +2,7 @@
 name: architect-deep
 description: Opus-backed variant of the architect agent for complex, high-stakes, or cross-cutting design work. Invoked via `/architect --deep`. Use when the default Sonnet architect is likely to miss trade-offs.
 model: opus
+effort: xhigh
 memory: project
 tools: Read, Write, Edit, Glob, Grep, WebFetch, WebSearch
 ---
@@ -32,4 +33,4 @@ For `medium` and `large` work, lean into the deeper analysis: stress-test each p
 
 ## File scope
 
-Identical to the default architect: only `.agentwork/architect/`, `.agentwork/session.yaml`, and `.agentwork/progress-log.md`.
+Identical to the default architect: only `.agentwork/architect/` and `.agentwork/session.yaml`. The progress log (`.agentwork/progress-log.md`) is maintained automatically by the `SubagentStart`/`SubagentStop` hooks — never write to it yourself.

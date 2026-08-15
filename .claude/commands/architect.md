@@ -16,4 +16,4 @@ Both variants follow the same workflow: read `.agentwork/session.yaml`, run comp
 
 After the architect presents solutions (medium/large) or a single proposal (small), wait for me to confirm before finalizing the plan to `status: ready`. Trivial requests should be redirected straight to `/implement` with no plan document.
 
-**Handoff rule (read before invoking):** This is one serial stage of a four-stage pipeline (architect → coder → code-reviewer → qa). Run only the architect subagent this turn. When it finishes, present its plan summary and **STOP** — do not invoke `/implement`, `/code-review`, or `/qa` in the same turn, and never launch them in parallel with this stage. Wait for my explicit approval before moving to any next stage.
+**Handoff rule (read before invoking):** This is one serial stage of a four-stage pipeline (architect → coder → code-reviewer → qa). Run only the architect subagent this turn. When it finishes, present its plan summary and **STOP** — do not invoke `/implement`, `/review-code`, or `/qa` in the same turn, and never launch them in parallel with this stage. Wait for my explicit approval before moving to any next stage.

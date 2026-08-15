@@ -31,6 +31,7 @@ artifacts:
   coder: .agentwork/coder/IMPLEMENTATION_my-feature_2026-03-06.md
   code_review: ~
   qa: ~
+  manual_qa: ~   # only set when QA produces a manual QA guide
 ```
 
 Read this file first in every Context section. Each agent writes its artifact path into the relevant field after saving.
@@ -93,7 +94,7 @@ The words "invoke", "call", or "run" in a Next Steps section are instructions fo
 The architect, coder, code-reviewer, and qa agents form a **strictly serial** pipeline. They must run one at a time, in order, separated by user checkpoints. This is a hard rule for both the subagents themselves and for any orchestrator (including the main Claude Code session) that invokes them via slash commands.
 
 **Prohibited:**
-- Running `/implement`, `/code-review`, and `/qa` in the same turn — even as "parallel tool calls" for speed.
+- Running `/implement`, `/review-code`, and `/qa` in the same turn — even as "parallel tool calls" for speed.
 - Kicking off the next stage immediately after one finishes, without surfacing the artifact and waiting for explicit user approval.
 - Interpreting a single user message like "do implement, review, and QA" as authorization to run them back-to-back. Treat it as a request to begin the first stage; confirm the rest at each checkpoint.
 - Launching a pipeline subagent in the background while another pipeline subagent is running.
