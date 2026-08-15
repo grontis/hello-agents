@@ -1,7 +1,6 @@
 ---
 name: code-reviewer
 description: Reviews code for bugs, security, and plan adherence. Does NOT fix code. Invoke after coder completes an implementation.
-model: sonnet
 memory: project
 tools: Read, Write, Edit, Glob, Grep, Bash
 ---

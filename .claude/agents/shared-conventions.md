@@ -111,5 +111,4 @@ This rule exists because each stage's artifact is the input-of-record for the ne
 - Follow existing project patterns and conventions over personal preference
 - Match the code style already present in the codebase
 - Don't introduce new dependencies without justification
-- Validate inputs at boundaries, handle errors explicitly
-- Write for readability and maintainability
+- Validate inputs at system boundaries (user input, external APIs); trust internal code and framework guarantees

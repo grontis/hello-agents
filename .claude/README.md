@@ -26,11 +26,16 @@ artifact files.
 
 | Agent | Role | Model | Slash Command |
 |---|---|---|---|
-| `architect` | Explores solutions, creates a single plan document. No code. | sonnet | `/architect` |
-| `architect-deep` | Opus-backed variant for complex/cross-cutting design. Same workflow. | opus | `/architect --deep` |
-| `coder` | Implements the plan, writes unit tests, verifies they pass. | sonnet | `/implement` |
-| `code-reviewer` | Reviews code for bugs, security, best practices. No fixes. | sonnet | `/review-code` |
-| `qa` | Writes integration tests, runs full suite, validates requirements. | sonnet | `/qa` |
+| `architect` | Explores solutions, creates a single plan document. No code. | inherit | `/architect` |
+| `architect-deep` | Fable-backed, max-effort variant for complex/cross-cutting design. Same workflow. | fable | `/architect --deep` |
+| `coder` | Implements the plan, writes unit tests, verifies they pass. | inherit | `/implement` |
+| `code-reviewer` | Reviews code for bugs, security, best practices. No fixes. | inherit | `/review-code` |
+| `qa` | Writes integration tests, runs full suite, validates requirements. | inherit | `/qa` |
+
+`inherit` means the agent has no `model:` pin and runs on whatever model the
+session is using — pick the session model (`/model`) and the whole pipeline
+follows it. Set `CLAUDE_CODE_SUBAGENT_MODEL` to override all subagents for a
+session without editing these files.
 
 **Bonus:** `/status` — check pipeline progress at any time.
 
@@ -106,8 +111,8 @@ prompt you. After you select one, it fills in the Selected Approach section
 of the same plan document and sets `status: ready`.
 
 **For complex or cross-cutting design work**, use `/architect --deep` —
-this routes to the Opus-backed `architect-deep` variant. Everything else
-about the workflow is identical.
+this routes to the Fable-backed `architect-deep` variant running at max
+effort. Everything else about the workflow is identical.
 
 ### Step 2 — Implement (Coder)
 
@@ -201,11 +206,11 @@ creating their artifact documents:
 ```
 .claude/
 ├── agents/                  # Agent definitions
-│   ├── architect.md         # sonnet (default)
-│   ├── architect-deep.md    # opus (opt-in via /architect --deep)
-│   ├── coder.md
-│   ├── code-reviewer.md     # sonnet
-│   ├── qa.md
+│   ├── architect.md         # inherits session model (default)
+│   ├── architect-deep.md    # fable, effort: max (opt-in via /architect --deep)
+│   ├── coder.md             # inherits session model
+│   ├── code-reviewer.md     # inherits session model
+│   ├── qa.md                # inherits session model
 │   └── shared-conventions.md  # read at runtime by every agent (single source of rules)
 ├── commands/                # Slash commands (user-invoked)
 │   ├── architect.md         # /architect [--deep]
