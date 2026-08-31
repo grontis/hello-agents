@@ -16,7 +16,10 @@
       {
         "matcher": "architect|architect-deep|coder|code-reviewer|qa",
         "hooks": [
-          { "type": "command", "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/progress-log.mjs\" start" }
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/progress-log.mjs\" start"
+          }
         ]
       }
     ],
@@ -24,7 +27,14 @@
       {
         "matcher": "architect|architect-deep|coder|code-reviewer|qa",
         "hooks": [
-          { "type": "command", "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/progress-log.mjs\" stop" }
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/progress-log.mjs\" stop"
+          },
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/stage-event.mjs\""
+          }
         ]
       }
     ],
@@ -32,7 +42,10 @@
       {
         "matcher": "implement|review-code|qa",
         "hooks": [
-          { "type": "command", "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/gateway.mjs\"" }
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/gateway.mjs\""
+          }
         ]
       }
     ]

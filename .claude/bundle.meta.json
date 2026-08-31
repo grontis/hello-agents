@@ -1,0 +1,52 @@
+{
+  "id": "standard",
+  "version": "1.0.0",
+  "description": "architect -> coder -> code-reviewer -> qa, with a user checkpoint at every handoff",
+  "docs": "https://github.com/grontis/hello-agents",
+  "stages": [
+    {
+      "key": "PLAN",
+      "agent": "architect",
+      "command": "/architect",
+      "artifactGlob": ".agentwork/architect/PLAN_*.md",
+      "statuses": {
+        "accept": ["proposed", "ready"],
+        "blocking": [],
+        "inProgress": ["draft", "changes-required"]
+      }
+    },
+    {
+      "key": "IMPLEMENT",
+      "agent": "coder",
+      "command": "/implement",
+      "artifactGlob": ".agentwork/coder/IMPLEMENTATION_*.md",
+      "statuses": {
+        "accept": ["implemented", "blocked"],
+        "blocking": ["blocked"],
+        "inProgress": []
+      }
+    },
+    {
+      "key": "REVIEW",
+      "agent": "code-reviewer",
+      "command": "/review-code",
+      "artifactGlob": ".agentwork/code-review/CODE_REVIEW_*.md",
+      "statuses": {
+        "accept": ["approved", "changes-required", "needs-discussion"],
+        "blocking": ["changes-required", "needs-discussion"],
+        "inProgress": []
+      }
+    },
+    {
+      "key": "QA",
+      "agent": "qa",
+      "command": "/qa",
+      "artifactGlob": ".agentwork/qa/QA_REPORT_*.md",
+      "statuses": {
+        "accept": ["pass", "pass-with-notes", "fail"],
+        "blocking": ["fail"],
+        "inProgress": []
+      }
+    }
+  ]
+}
