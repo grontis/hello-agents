@@ -8,9 +8,9 @@ This repository contains **no application code, build system, or test suite**. I
 
 When asked to "build", "test", or "run" something, clarify with the user — there is nothing to compile. Verification here means reading the markdown for internal consistency against `shared-conventions.md`.
 
-## The 4-agent pipeline
+## The 5-agent pipeline
 
-`.claude/agents/` defines a four-stage development pipeline invoked via slash commands in `.claude/commands/`:
+`.claude/agents/` defines a five-stage development pipeline invoked via slash commands in `.claude/commands/`:
 
 | Stage | Agent | Command | Model | Writes to |
 |---|---|---|---|---|
@@ -19,12 +19,21 @@ When asked to "build", "test", or "run" something, clarify with the user — the
 | Build  | `coder`     | `/implement`           | inherit | `.agentwork/coder/IMPLEMENTATION_<slug>_<date>.md` |
 | Review | `code-reviewer` | `/review-code`     | inherit | `.agentwork/code-review/CODE_REVIEW_<slug>_<date>.md` |
 | Verify | `qa`        | `/qa`                  | inherit | `.agentwork/qa/QA_REPORT_<slug>_<date>.md` |
+| Ship   | `pr`        | `/open-pr`             | inherit | `.agentwork/pr/PR_<slug>_<date>.md` |
 
 `/status` reports current pipeline progress. The review stage's command is deliberately named `/review-code` — **not** `/code-review` — so it doesn't shadow Claude Code's built-in `/code-review` (and `/code-review ultra`) surface; don't rename it back. Each agent runs as an isolated subprocess — it does **not** see chat history and communicates only through artifact files.
 
-**Model tiering — inherit by design:** The four pipeline agents deliberately carry **no `model:` frontmatter**, so each inherits the session's model. The session model (`/model`) is the pipeline's tier knob: a Sonnet session runs an economical pipeline, a Fable session runs a premium one — same files either way. Do not re-add `model:` pins to these agents; `CLAUDE_CODE_SUBAGENT_MODEL` is the per-session override if one is ever needed. The one exception is `architect-deep` (`model: fable`, `effort: max`), opt-in via `/architect --deep` for genuinely complex system design — from a cheaper session it escalates design to the strongest model; from a Fable session it means "max effort". `architect-deep.md` reads `architect.md` at runtime so there is one canonical workflow. (History: the pipeline originally pinned Sonnet everywhere with an Opus-backed deep tier; it was re-tiered in Aug 2026 once Fable-tier sessions became the norm and per-stage quality crutches stopped paying for themselves.)
+**Model tiering — inherit by design:** The pipeline agents deliberately carry **no `model:` frontmatter**, so each inherits the session's model. The session model (`/model`) is the pipeline's tier knob: a Sonnet session runs an economical pipeline, a Fable session runs a premium one — same files either way. Do not re-add `model:` pins to these agents; `CLAUDE_CODE_SUBAGENT_MODEL` is the per-session override if one is ever needed. The one exception is `architect-deep` (`model: fable`, `effort: max`), opt-in via `/architect --deep` for genuinely complex system design — from a cheaper session it escalates design to the strongest model; from a Fable session it means "max effort". `architect-deep.md` reads `architect.md` at runtime so there is one canonical workflow. (History: the pipeline originally pinned Sonnet everywhere with an Opus-backed deep tier; it was re-tiered in Aug 2026 once Fable-tier sessions became the norm and per-stage quality crutches stopped paying for themselves.)
 
 **Effort tiers:** `coder` sets `effort: xhigh` (the documented best setting for coding/agentic work); `architect-deep` sets `effort: max`; `qa` sets `effort: high`; `architect` and `code-reviewer` inherit the session default. Keep these in the agent frontmatter, not in prose. (On Fable, thinking is always on and `effort` is the lever that controls its depth — these pins remain meaningful regardless of which model the session runs.)
+
+**The PR stage writes no code.** `pr` pushes the branch and opens the pull
+request, and its description is written *from* the plan, review and QA report —
+that is the payoff for having produced them. It never force-pushes, never
+commits, and never pushes to the base branch; a dirty tree or a failed QA
+gateway means `status: blocked` and no pull request. Its `pr_url` front-matter
+field is what downstream consumers read, so it must be the URL `gh` actually
+printed.
 
 **Single plan document:** The architect produces one `PLAN_<slug>_<date>.md` per feature. It holds the complexity triage, solution proposals (when the complexity is medium/large), the selected approach, and the detailed implementation steps. Its `status` field progresses `draft` → `proposed` → `ready` (or `changes-required` on revision cycles). Do **not** reintroduce a separate implementation-plan file.
 
@@ -33,7 +42,7 @@ When asked to "build", "test", or "run" something, clarify with the user — the
 The pipeline is one of two supported ways of working, not the default for everything. Pick per task:
 
 - **Solo mode (no pipeline):** work in the main loop directly — plan mode for design approval, direct implementation, then the built-in `/code-review` (or `/code-review ultra` for a cloud multi-agent review) as the quality gate. Prefer this for small-to-medium changes, especially in a strong-model (Fable/Opus) session: staged handoffs are pure overhead there, since the model plans and self-verifies. Do not spin up the pipeline agents just because they exist.
-- **Pipeline mode (`/architect` → `/implement` → `/review-code` → `/qa`):** use for large or multi-session features where the pipeline's *unique* value applies — durable plan/review/QA artifacts in `.agentwork/`, enforced user checkpoints between stages, an audit trail, and revision/circuit-breaker discipline. The pipeline exists for **process and artifacts**, not as a quality crutch for weaker models.
+- **Pipeline mode (`/architect` → `/implement` → `/review-code` → `/qa` → `/open-pr`):** use for large or multi-session features where the pipeline's *unique* value applies — durable plan/review/QA artifacts in `.agentwork/`, enforced user checkpoints between stages, an audit trail, and revision/circuit-breaker discipline. The pipeline exists for **process and artifacts**, not as a quality crutch for weaker models.
 
 Rule of thumb: if the work wouldn't benefit from a written plan document a human signs off on, use solo mode. When in doubt on a request that names neither mode, ask which the user wants rather than defaulting to the pipeline.
 

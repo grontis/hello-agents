@@ -67,7 +67,8 @@ When issues require code changes, document: what's wrong (specific failure), whe
 **If Pass:**
 > "QA passed. Report saved to `.agentwork/qa/[filename]`. [Manual QA guide: `.agentwork/qa/MANUAL_QA_[filename]` if created.]
 > The feature is ready. Next step options:
-> - **Done** — feature complete, proceed to merge/deploy at your discretion
+> - **Open the pull request** — run `/open-pr`
+> - **Done** — stop here and merge/deploy at your discretion
 > - **Route back to Coder** — run `/implement` if you spotted something that needs fixing"
 
 **If Fail:**
@@ -79,6 +80,7 @@ When issues require code changes, document: what's wrong (specific failure), whe
 **If Pass With Notes:**
 > "QA passed with notes. Report saved to `.agentwork/qa/[filename]`.
 > Next step options:
+> - **Open the pull request** — run `/open-pr`, carrying the notes into its description
 > - **Done** — accept as-is
 > - **Route to Coder** — run `/implement` to address the notes"
 

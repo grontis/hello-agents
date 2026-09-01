@@ -1,7 +1,7 @@
 {
   "id": "standard",
-  "version": "1.0.0",
-  "description": "architect -> coder -> code-reviewer -> qa, with a user checkpoint at every handoff",
+  "version": "1.1.0",
+  "description": "architect -> coder -> code-reviewer -> qa -> pr, with a user checkpoint at every handoff",
   "docs": "https://github.com/grontis/hello-agents",
   "stages": [
     {
@@ -10,9 +10,15 @@
       "command": "/architect",
       "artifactGlob": ".agentwork/architect/PLAN_*.md",
       "statuses": {
-        "accept": ["proposed", "ready"],
+        "accept": [
+          "proposed",
+          "ready"
+        ],
         "blocking": [],
-        "inProgress": ["draft", "changes-required"]
+        "inProgress": [
+          "draft",
+          "changes-required"
+        ]
       }
     },
     {
@@ -21,8 +27,13 @@
       "command": "/implement",
       "artifactGlob": ".agentwork/coder/IMPLEMENTATION_*.md",
       "statuses": {
-        "accept": ["implemented", "blocked"],
-        "blocking": ["blocked"],
+        "accept": [
+          "implemented",
+          "blocked"
+        ],
+        "blocking": [
+          "blocked"
+        ],
         "inProgress": []
       }
     },
@@ -32,8 +43,15 @@
       "command": "/review-code",
       "artifactGlob": ".agentwork/code-review/CODE_REVIEW_*.md",
       "statuses": {
-        "accept": ["approved", "changes-required", "needs-discussion"],
-        "blocking": ["changes-required", "needs-discussion"],
+        "accept": [
+          "approved",
+          "changes-required",
+          "needs-discussion"
+        ],
+        "blocking": [
+          "changes-required",
+          "needs-discussion"
+        ],
         "inProgress": []
       }
     },
@@ -43,8 +61,31 @@
       "command": "/qa",
       "artifactGlob": ".agentwork/qa/QA_REPORT_*.md",
       "statuses": {
-        "accept": ["pass", "pass-with-notes", "fail"],
-        "blocking": ["fail"],
+        "accept": [
+          "pass",
+          "pass-with-notes",
+          "fail"
+        ],
+        "blocking": [
+          "fail"
+        ],
+        "inProgress": []
+      }
+    },
+    {
+      "key": "PR",
+      "agent": "pr",
+      "command": "/open-pr",
+      "artifactGlob": ".agentwork/pr/PR_*.md",
+      "statuses": {
+        "accept": [
+          "opened",
+          "updated",
+          "blocked"
+        ],
+        "blocking": [
+          "blocked"
+        ],
         "inProgress": []
       }
     }

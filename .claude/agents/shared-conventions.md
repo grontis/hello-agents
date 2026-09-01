@@ -8,6 +8,7 @@ Agents communicate through markdown artifacts in `.agentwork/`:
 ├── coder/          # IMPLEMENTATION_[slug]_YYYY-MM-DD.md
 ├── code-review/    # CODE_REVIEW_[slug]_YYYY-MM-DD.md
 ├── qa/             # QA_REPORT_[slug]_YYYY-MM-DD.md
+├── pr/             # PR_[slug]_YYYY-MM-DD.md
 ├── session.yaml    # Active feature state — read this first
 └── progress-log.md # Cross-agent audit trail
 ```
@@ -32,6 +33,7 @@ artifacts:
   code_review: ~
   qa: ~
   manual_qa: ~   # only set when QA produces a manual QA guide
+  pr: ~
 ```
 
 Read this file first in every Context section. Each agent writes its artifact path into the relevant field after saving.
