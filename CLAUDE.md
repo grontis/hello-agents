@@ -27,6 +27,18 @@ When asked to "build", "test", or "run" something, clarify with the user — the
 
 **Effort tiers:** `coder` sets `effort: xhigh` (the documented best setting for coding/agentic work); `architect-deep` sets `effort: max`; `qa` sets `effort: high`; `architect` and `code-reviewer` inherit the session default. Keep these in the agent frontmatter, not in prose. (On Fable, thinking is always on and `effort` is the lever that controls its depth — these pins remain meaningful regardless of which model the session runs.)
 
+**The project stages are a second flow, not extra rows in the task pipeline.**
+`/author-spec` runs **in the main loop** — it is an interview, and a subagent
+cannot talk to the user — maintaining `PROJECT_SPEC_<slug>_<date>.md` in
+`.agentwork/spec-author/` whose front-matter `status` (draft → proposed, set
+only on the user's say-so) is the completion signal; its four summary headings
+(Overview, Acceptance Criteria, Technical Notes, Constraints) are extracted by
+downstream tooling and must exist exactly. `/generate-tasks` runs the
+`task-planner` subagent, one-shot, writing `TASKS_<slug>_<date>.yaml` in
+`.agentwork/task-planner/` to `TASKS_TEMPLATE.yaml`'s machine-ingested
+contract — the file is proposals only; a human reviews and applies the batch
+in the app, and nothing in this repo creates tasks.
+
 **The PR stage writes no code.** `pr` pushes the branch and opens the pull
 request, and its description is written *from* the plan, review and QA report —
 that is the payoff for having produced them. It never force-pushes, never

@@ -1,7 +1,7 @@
 {
   "id": "standard",
-  "version": "1.1.0",
-  "description": "architect -> coder -> code-reviewer -> qa -> pr, with a user checkpoint at every handoff",
+  "version": "1.2.0",
+  "description": "the task pipeline (architect -> coder -> code-reviewer -> qa -> pr) plus the project stages (spec conversation -> task generation)",
   "docs": "https://github.com/grontis/hello-agents",
   "stages": [
     {
@@ -87,6 +87,39 @@
           "blocked"
         ],
         "inProgress": []
+      }
+    },
+    {
+      "key": "SPEC",
+      "agent": "",
+      "command": "/author-spec",
+      "artifactGlob": ".agentwork/spec-author/PROJECT_SPEC_*.md",
+      "statuses": {
+        "accept": [
+          "proposed"
+        ],
+        "blocking": [],
+        "inProgress": [
+          "draft"
+        ]
+      }
+    },
+    {
+      "key": "TASK_GEN",
+      "agent": "task-planner",
+      "command": "/generate-tasks",
+      "artifactGlob": ".agentwork/task-planner/TASKS_*.yaml",
+      "statuses": {
+        "accept": [
+          "proposed",
+          "blocked"
+        ],
+        "blocking": [
+          "blocked"
+        ],
+        "inProgress": [
+          "draft"
+        ]
       }
     }
   ]

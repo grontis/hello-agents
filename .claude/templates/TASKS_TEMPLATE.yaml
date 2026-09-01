@@ -1,0 +1,41 @@
+---
+status: draft
+revision: 0
+valid-statuses: [draft, proposed, blocked]
+project: [project-slug]
+generated_from: .agentwork/spec-author/PROJECT_SPEC_[slug]_YYYY-MM-DD.md
+---
+# TASKS.yaml — machine-ingested. The whole file is rejected on any deviation,
+# with the offending path in the error. Rules:
+#   - `tasks` non-empty, at most 50 entries
+#   - `id` unique within the file (t1, t2, ...); `name` non-empty, <= 200 chars
+#   - `priority` HIGH | MEDIUM | LOW (optional; MEDIUM when omitted)
+#   - `agent` defaults to true — omit it unless a task is human-only
+#   - `dependsOn` references only ids in this file, no cycles, no self-refs
+#   - every text section <= 16 KB; the whole file <= 256 KB
+tasks:
+  - id: t1
+    name: "[Imperative, specific: 'Add OAuth login endpoint']"
+    priority: HIGH
+    rationale: "[Which part of the project spec this comes from, cited.]"
+    spec:
+      overview: |
+        [What this task builds and why, two to four sentences.]
+      acceptanceCriteria: |
+        - [Checkable by running the code, not by opinion]
+        - [One criterion per line]
+      technicalNotes: |
+        [Files, modules and patterns to follow. Point at real paths.]
+      constraints: |
+        [The project spec's "never touch" rules that apply here.]
+    dependsOn: []
+
+  - id: t2
+    name: "[Second task]"
+    rationale: "[Citation.]"
+    spec:
+      overview: |
+        [...]
+      acceptanceCriteria: |
+        - [...]
+    dependsOn: [t1]   # only real (compile-time or data-model) dependencies
